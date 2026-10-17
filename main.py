@@ -77,7 +77,17 @@ def get_base_dir():
 BASE_DIR        = get_base_dir()
 API_CONFIG_PATH = BASE_DIR / "config" / "api_keys.json"
 PROMPT_PATH     = BASE_DIR / "core" / "prompt.txt"
-LIVE_MODEL          = "models/gemini-3.1-flash-live-preview"
+
+# Default Live model - overridable via config/api_keys.json: "live_model": "<model_name>"
+# gemini-2.0-flash-exp retired; using stable native audio model
+LIVE_MODEL_DEFAULT  = "models/gemini-2.5-flash-native-audio-latest"
+# Fallback models in priority order if default fails
+LIVE_MODEL_FALLBACKS = [
+    "models/gemini-3.8-live",
+    "models/gemini-2.5-flash-native-audio-preview-12-2025",
+    "models/gemini-3.1-flash-live-preview",
+]
+
 CHANNELS            = 1
 SEND_SAMPLE_RATE    = 16000 
 RECEIVE_SAMPLE_RATE = 24000
@@ -117,7 +127,7 @@ def _pcm_level(samples) -> float:
 # F2 is high for spread vowels (/i/, /e/) and low for rounded ones (/u/, /o/).
 # Extra time beyond the device's reported output latency before the microphone
 # is trusted again: covers room decay and the speaker's own settling.
-_TAIL_MARGIN = 0.25
+_TAIL_MARGIN = 0.4
 
 _VIS_WIN = 1024        # ~43 ms analysis window at 24 kHz: enough for formants
 _VIS_HOP = 480         # 20 ms between frames, i.e. 50 shapes a second
@@ -266,6 +276,26 @@ def _render_prompt(template: str, values: dict) -> str:
 def _get_api_key() -> str:
     with open(API_CONFIG_PATH, "r", encoding="utf-8") as f:
         return json.load(f)["gemini_api_key"]
+
+
+def _get_live_model() -> str:
+    """Get the Live model name with config override support.
+
+    Returns the model from config if set, otherwise returns the default.
+    Override by adding "live_model": "models/..." to config/api_keys.json
+    """
+    try:
+        with open(API_CONFIG_PATH, "r", encoding="utf-8") as f:
+            config = json.load(f)
+            # Check for override
+            override = config.get("live_model", "").strip()
+            if override:
+                log.info(f"[OPERO] Using Live model from config: {override}")
+                return override
+    except Exception:
+        pass
+
+    return LIVE_MODEL_DEFAULT
 
 
 def _load_system_prompt() -> str:
@@ -606,9 +636,15 @@ class OperaLive:
         self._proactive        = ProactiveEngine()
         self._last_user_speech = time.monotonic()  # updated on every user utterance
         self._session_log: list[str] = []          # conversation turns for end-of-session summary
+        self._session_log_max = 100                # cap to prevent unbounded growth
 
         self._enhanced_live = True  # proactive audio; auto-disabled if the server rejects it
         self._tuned_live    = True  # turn-taking / media / thinking knobs; same fallback
+        self._conn_backoff  = 3    # connection retry delay in seconds
+
+        # Model fallback tracking
+        self._current_live_model = None  # Tracks which model is being used (for fallback logic)
+        self._fallback_index = 0         # Index into LIVE_MODEL_FALLBACKS
 
         _base_dir = Path(__file__).resolve().parent
         _inline_names = {t["name"] for t in TOOL_DECLARATIONS}
@@ -1339,7 +1375,7 @@ class OperaLive:
                     result = "Vision is still processing the previous request. I will not call this again."
                 else:
                     self._vision_busy      = True
-                    self._vision_last_time = _now
+                    self._vision_last_time = _now  # Set BEFORE capture to prevent race
                     angle     = args.get("angle", "screen").lower()
                     user_text = args.get("text", "What do you see?")
                     if angle == "camera":
@@ -1524,7 +1560,8 @@ class OperaLive:
                     self._tail_until = 0.0      # a real voice ends the tail early
                 except Exception:
                     return
-            elif self._echo._hist:
+            elif self._echo._hist and not self._tail_active():
+                # Only reset echo history when tail has FULLY expired AND no echo playing
                 self._echo.reset()
 
             # ── Push-to-talk ─────────────────────────────────────────────────
@@ -1539,8 +1576,8 @@ class OperaLive:
                 def _safe_put():
                     try:
                         self.out_queue.put_nowait({"data": data, "mime_type": "audio/pcm"})
-                    except asyncio.QueueFull as e:
-                        log.debug("{}", e)
+                    except asyncio.QueueFull:
+                        log.warning("[OPERO] ⚠️ Microphone queue full — audio dropped")
                 loop.call_soon_threadsafe(_safe_put)
                 # Feed the live mic level to the HUD so the waveform reacts to
                 # the user's actual voice while listening. Purely cosmetic — any
@@ -1669,8 +1706,8 @@ class OperaLive:
                             for _i in range(0, len(_audio_data), _SLICE):
                                 try:
                                     self.audio_in_queue.put_nowait(_audio_data[_i : _i + _SLICE])
-                                except asyncio.QueueFull as e:
-                                    log.debug("{}", e)
+                                except asyncio.QueueFull:
+                                    log.warning("[OPERO] ⚠️ Audio playback queue full — response dropped")
 
                     if response.server_content:
                         sc = response.server_content
@@ -1703,9 +1740,10 @@ class OperaLive:
                                 self._turn_done_event.set()
 
                             # If this turn_complete ends an interrupted response, clear the
-                            # flag and skip all further processing for that turn.
+                            # flag ONLY when audio queue is empty (all interrupted audio drained)
                             if self._interrupted:
-                                self._interrupted = False
+                                if self.audio_in_queue.empty():
+                                    self._interrupted = False
                                 in_buf  = []
                                 out_buf = []
                                 self._visemes.reset()
@@ -1716,6 +1754,9 @@ class OperaLive:
                                 self._last_out_logged = ""   # new exchange
                                 self.ui.write_log(f"You: {full_in}")
                                 self._session_log.append(f"User: {full_in}")
+                                # Cap session log to prevent unbounded growth
+                                if len(self._session_log) > self._session_log_max:
+                                    self._session_log = self._session_log[-self._session_log_max:]
                                 if self._dashboard:
                                     asyncio.create_task(self._dashboard.broadcast({
                                         "type": "log", "speaker": "user",
@@ -1735,6 +1776,9 @@ class OperaLive:
                                 self._last_out_logged = full_out
                                 self.ui.write_log(f"{self._asst_name}: {full_out}")
                                 self._session_log.append(f"{self._asst_name}: {full_out}")
+                                # Cap session log to prevent unbounded growth
+                                if len(self._session_log) > self._session_log_max:
+                                    self._session_log = self._session_log[-self._session_log_max:]
                                 if self._dashboard:
                                     asyncio.create_task(self._dashboard.broadcast({
                                         "type": "log", "speaker": "opero",
@@ -2168,7 +2212,13 @@ class OperaLive:
 
     async def _relay_phone_audio(self) -> None:
         """Forward phone mic PCM chunks from dashboard queue into the Gemini Live session."""
-        q = self._dashboard._phone_audio_queue
+        if not self._dashboard:
+            return  # Dashboard unavailable, exit cleanly
+        try:
+            q = self._dashboard._phone_audio_queue
+        except AttributeError:
+            log.info("[Phone] Audio relay unavailable — dashboard has no phone queue.")
+            return
         while True:
             try:
                 chunk = await asyncio.wait_for(q.get(), timeout=1.0)
@@ -2176,14 +2226,17 @@ class OperaLive:
                 # No audio for 1 s → phone mic inactive, give PC mic back
                 self._phone_active = False
                 continue
+            except Exception as e:
+                log.warning(f"[Phone] Relay error: {e}")
+                break
             self._phone_active = True   # phone is streaming — silence PC mic
             with self._speaking_lock:
                 speaking = self._is_speaking
             if not speaking and not self.ui.muted:
                 try:
                     self.out_queue.put_nowait(chunk)
-                except asyncio.QueueFull as e:
-                    log.debug("{}", e)
+                except asyncio.QueueFull:
+                    log.warning("[OPERO] ⚠️ Phone audio queue full — audio dropped")
 
     def _on_phone_connected(self) -> None:
         self.ui.write_log("SYS: Phone connected via Remote Dashboard.")
@@ -2291,6 +2344,9 @@ class OperaLive:
                 _resumed_with = self._resume_handle is not None
                 config = self._build_config()
 
+                # Get Live model with config override support
+                live_model = _get_live_model()
+
                 # Fresh client on every reconnect — avoids stale HTTP session state
                 # v1alpha carries proactive audio; if it gets rejected we fall
                 # back to v1beta.
@@ -2300,12 +2356,12 @@ class OperaLive:
                 )
 
                 async with (
-                    client.aio.live.connect(model=LIVE_MODEL, config=config) as session,
+                    client.aio.live.connect(model=live_model, config=config) as session,
                     asyncio.TaskGroup() as tg,
                 ):
                     self.session          = session
-                    self.audio_in_queue   = asyncio.Queue()
-                    self.out_queue        = asyncio.Queue(maxsize=200)
+                    self.audio_in_queue   = asyncio.Queue(maxsize=1000)  # ~5s at 24kHz
+                    self.out_queue        = asyncio.Queue(maxsize=500)     # ~2.5s at 16kHz
                     self._turn_done_event = asyncio.Event()
 
                     # Reset transient state that must not carry over from a previous session
@@ -2317,6 +2373,7 @@ class OperaLive:
                     self._interrupted          = False
 
                     log.info("[OPERO] Connected.")
+                    self._conn_backoff = 3  # Reset backoff on successful connection
                     if _resumed_with:
                         # Say it plainly: the difference between "it reconnected"
                         # and "it reconnected and still knows what we were doing"
@@ -2447,9 +2504,73 @@ class OperaLive:
                     )
                     continue
 
+                # Model not found (1008) — try fallback models
+                if "1008" in err_str and ("not found" in err_str.lower() or "not supported" in err_str.lower()):
+                    current_model = getattr(self, '_current_live_model', live_model)
+                    log.error(f"[OPERO] Model not available: {current_model}")
+
+                    # Try fallback models
+                    if not hasattr(self, '_fallback_index'):
+                        self._fallback_index = 0
+
+                    if self._fallback_index < len(LIVE_MODEL_FALLBACKS):
+                        fallback = LIVE_MODEL_FALLBACKS[self._fallback_index]
+                        self._fallback_index += 1
+                        self._current_live_model = fallback
+
+                        self.ui.write_log(f"SYS: Model {current_model} unavailable. Trying {fallback}...")
+                        log.info(f"[OPERO] Fallback to model: {fallback}")
+
+                        # Save fallback to config for future sessions
+                        try:
+                            with open(API_CONFIG_PATH, "r+", encoding="utf-8") as f:
+                                config_data = json.load(f)
+                                config_data["live_model"] = fallback
+                                f.seek(0)
+                                json.dump(config_data, f, indent=2)
+                                f.truncate()
+                        except Exception as cfg_err:
+                            log.warning(f"Could not save fallback model to config: {cfg_err}")
+
+                        continue
+                    else:
+                        # All fallbacks exhausted
+                        self.ui.write_log(
+                            f"ERR: All Live models unavailable. Please check Gemini API status or update LIVE_MODEL_DEFAULT in main.py"
+                        )
+                        await asyncio.sleep(60)
+                        continue
+
+                # Model configuration error — likely deprecated model name
+                if ("404" in err_str or "not found" in err_str.lower()) and "model" in err_str.lower():
+                    log.error(f"[OPERO] Model configuration error: {err_str[:200]}")
+                    self.ui.write_log("ERR: Model configuration issue — check LIVE_MODEL in main.py")
+                    _conn_backoff = min(getattr(self, "_conn_backoff", 3) * 2, 60)
+                    self._conn_backoff = _conn_backoff
+                    await asyncio.sleep(_conn_backoff)
+                    continue
+
+                # Schema error (1007 = protocol violation) — likely malformed tool declaration
+                if "1007" in err_str:
+                    log.error(f"[OPERO] Tool schema error: {err_str}")
+                    self.ui.write_log(
+                        f"ERR: Tool schema validation failed. "
+                        f"Check tool declarations for missing 'items' on arrays, invalid 'properties', etc. "
+                        f"Details: {err_str[:200]}"
+                    )
+                    self.ui.set_state("SLEEPING")
+                    # Don't prompt for API key on schema errors - it's a code issue, not a key issue
+                    await asyncio.sleep(30)  # Wait before retrying to avoid spam
+                    continue
+
                 # Invalid API key — stop hammering the API, prompt re-configuration
-                if ("API key not valid" in err_str or "1007" in err_str
-                        or "No API key was provided" in err_str):
+                # NOTE: Only genuine auth errors, NOT model errors (1008 with "not found")
+                if (("API key not valid" in err_str
+                        or "API_KEY_INVALID" in err_str
+                        or "No API key was provided" in err_str
+                        or "UNAUTHENTICATED" in err_str)
+                        and "not found" not in err_str.lower()
+                        and "not supported" not in err_str.lower()):
                     self.ui.write_log("ERR: API key invalid — please re-enter your key.")
                     self.ui.set_state("SLEEPING")
                     self.ui.prompt_reconfig()

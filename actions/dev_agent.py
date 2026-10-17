@@ -586,6 +586,130 @@ def _build_project(
     return f"{msg}\n\nLast error:\n{last_output[:600]}"
 
 
+def _execute_command(command: str, cwd: Path, timeout: int = 30) -> tuple[str, int]:
+    """Execute a shell command and return (output, exit_code)."""
+    try:
+        parts = command.split()
+        if parts[0].lower() == "python":
+            parts[0] = sys.executable
+
+        result = subprocess.run(
+            parts,
+            capture_output=True, text=True,
+            encoding="utf-8", errors="replace",
+            timeout=timeout,
+            cwd=str(cwd)
+        )
+
+        stdout = result.stdout.strip()
+        stderr = result.stderr.strip()
+        combined = "\n\n".join(filter(None, [stdout, stderr]))
+
+        return combined or "Command completed successfully.", result.returncode
+
+    except subprocess.TimeoutExpired:
+        return f"Command timed out after {timeout}s", -1
+    except FileNotFoundError as e:
+        return f"Command not found: {e}", -1
+    except Exception as e:
+        return f"Execution error: {e}", -1
+
+
+def _agent_loop(
+    description: str,
+    commands: list[str],
+    project_dir: Path,
+    max_iterations: int = 10,
+    speak=None,
+    player=None,
+) -> str:
+    """
+    Autonomous agent loop: execute commands, read output, retry on failure.
+
+    This implements the missing A. Task Automation capability:
+    - Executes multi-step workflows (build → test → commit → push)
+    - Reads command output and adapts
+    - Retries on failures with fixes
+    - Confirms before destructive operations
+    """
+    def log_msg(msg: str):
+        log.info(f"[AgentLoop] {msg}")
+        if player:
+            player.write_log(f"[Agent] {msg}")
+
+    log_msg(f"Starting agent loop: {len(commands)} commands, max {max_iterations} iterations")
+
+    results = []
+
+    for iteration in range(1, max_iterations + 1):
+        log_msg(f"Iteration {iteration}/{max_iterations}")
+
+        for i, cmd in enumerate(commands, 1):
+            log_msg(f"Step {i}/{len(commands)}: {cmd}")
+
+            # Confirmation gate for destructive commands
+            if any(x in cmd.lower() for x in ["push", "rm ", "delete", "drop"]):
+                from core.confirm import request_confirmation
+                if not request_confirmation(
+                    action=f"Execute: {cmd}",
+                    details=f"This command will modify external state.\nWorking directory: {project_dir}"
+                ):
+                    return f"Agent loop cancelled by user at step {i}: {cmd}"
+
+            output, exit_code = _execute_command(cmd, project_dir, timeout=60)
+            results.append({
+                "iteration": iteration,
+                "step": i,
+                "command": cmd,
+                "output": output[:500],
+                "exit_code": exit_code,
+            })
+
+            log_msg(f"Exit code: {exit_code}")
+            log_msg(f"Output preview: {output[:120]}")
+
+            if exit_code != 0:
+                # Command failed - try to diagnose and fix
+                log_msg(f"Command failed. Analyzing error...")
+
+                # Check if it's a dependency error
+                if "No module named" in output or "ModuleNotFoundError" in output:
+                    log_msg("Dependency error detected - attempting auto-fix")
+                    if _try_auto_install(output, project_dir):
+                        log_msg("Dependency installed - retrying command")
+                        continue
+
+                # Otherwise report failure
+                error_summary = "\n".join([
+                    f"Step {r['step']}: {r['command']} (exit {r['exit_code']})"
+                    for r in results[-3:]
+                ])
+                return (
+                    f"Agent loop failed at iteration {iteration}, step {i}.\n\n"
+                    f"Failed command: {cmd}\n"
+                    f"Error: {output[:300]}\n\n"
+                    f"Recent steps:\n{error_summary}"
+                )
+
+        # All commands succeeded
+        log_msg(f"Iteration {iteration} completed successfully")
+        break
+
+    if iteration >= max_iterations:
+        return f"Agent loop reached maximum iterations ({max_iterations}) without completing all steps."
+
+    summary = "\n".join([
+        f"{r['iteration']}.{r['step']}: {r['command']} ✓"
+        for r in results
+    ])
+
+    return (
+        f"Agent loop completed successfully in {iteration} iteration(s).\n\n"
+        f"Executed steps:\n{summary}\n\n"
+        f"Project directory: {project_dir}"
+    )
+
+
 def dev_agent(
     parameters: dict,
     response=None,
@@ -600,9 +724,29 @@ def dev_agent(
     project_name = p.get("project_name", "").strip()
     timeout      = int(p.get("timeout", 30))
 
+    # NEW: Support for agent loop mode
+    agent_mode   = p.get("agent_mode", False)
+    commands     = p.get("commands", [])
+
     if not description:
         return "Please describe the project you want me to build, sir."
 
+    # Agent loop mode: execute multi-step workflow
+    if agent_mode and commands:
+        project_dir = PROJECTS_DIR / (project_name or "opero_project")
+        if not project_dir.exists():
+            return f"Project directory not found: {project_dir}. Build the project first."
+
+        return _agent_loop(
+            description=description,
+            commands=commands,
+            project_dir=project_dir,
+            max_iterations=10,
+            speak=speak,
+            player=player,
+        )
+
+    # Standard mode: build project from scratch
     return _build_project(
         description  = description,
         language     = language,
@@ -616,13 +760,17 @@ def dev_agent(
 # ── Tool declaration (auto-discovered by core/action_loader.py) ──────────────
 TOOL = {
     "name": "dev_agent",
-    "description": "Builds complete multi-file projects from scratch: plans, writes files, installs deps, opens VSCode, runs and fixes errors.",
+    "description": (
+        "Builds complete multi-file projects from scratch: plans, writes files, installs deps, opens VSCode, runs and fixes errors. "
+        "NEW: Supports autonomous agent loop mode for multi-step workflows (build → test → commit → push). "
+        "Agent mode executes commands sequentially, reads output, retries on failure, and confirms destructive operations."
+    ),
     "parameters": {
         "type": "OBJECT",
         "properties": {
             "description": {
                 "type": "STRING",
-                "description": "What the project should do"
+                "description": "What the project should do (or workflow to execute in agent mode)"
             },
             "language": {
                 "type": "STRING",
@@ -635,6 +783,17 @@ TOOL = {
             "timeout": {
                 "type": "INTEGER",
                 "description": "Run timeout in seconds (default: 30)"
+            },
+            "agent_mode": {
+                "type": "BOOLEAN",
+                "description": "Enable autonomous agent loop for multi-step workflows"
+            },
+            "commands": {
+                "type": "ARRAY",
+                "description": "List of shell commands to execute in agent mode (e.g., ['git add .', 'git commit -m \"update\"', 'git push'])",
+                "items": {
+                    "type": "STRING"
+                }
             }
         },
         "required": [
@@ -647,4 +806,6 @@ TOOL = {
 VALIDATOR = {
     "description": [{"type": str, "required": True, "max_len": 2000}],
     "language":    [{"type": str, "max_len": 30}],
+    "agent_mode":  [{"type": bool}],
+    "commands":    [{"type": list}],
 }

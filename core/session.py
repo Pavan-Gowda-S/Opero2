@@ -470,6 +470,14 @@ async def reconnect_loop(opero, voice_engine: str = "opero") -> None:
                 )
                 continue
 
+            # Model configuration error
+            if ("404" in err_str or "not found" in err_str.lower()) and "model" in err_str.lower():
+                log.error(f"[Session] Model configuration error: {err_str[:200]}")
+                opero.ui.write_log("ERR: Model configuration issue -- check model name")
+                _conn_backoff = min(_conn_backoff * 2, 60)
+                await asyncio.sleep(_conn_backoff)
+                continue
+
             if "API key not valid" in err_str or "1007" in err_str:
                 opero.ui.write_log("ERR: API key invalid -- please re-enter your key.")
                 opero.ui.set_state("SLEEPING")

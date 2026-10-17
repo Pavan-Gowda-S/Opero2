@@ -126,8 +126,9 @@ class WakeWordDetector:
         # See PluginRegistry: `logger` is the console and gets everything,
         # `notify` is the activity log and gets only what the user must act on.
         self._notify    = notify or (lambda _msg: None)
-        self._queue: queue.Queue = queue.Queue(maxsize=50)
+        self._queue: queue.Queue = queue.Queue(maxsize=100)  # ~6.4s buffer at 16kHz
         self._thread: threading.Thread | None = None
+        self._queue_warn_threshold = 80  # warn when queue is 80% full
         self._running = False
         self._model = None
         self._ready = False
@@ -175,8 +176,11 @@ class WakeWordDetector:
             # frame_int16 is a numpy int16 array (possibly 2-D mono) — flatten to 1-D
             data = frame_int16[:, 0].copy() if getattr(frame_int16, "ndim", 1) > 1 else frame_int16.copy()
             self._queue.put_nowait(data)
-        except queue.Full as e:
-            log.debug("{}", e)
+            # Warn if queue is getting close to full
+            if self._queue.qsize() > self._queue_warn_threshold:
+                log.warning(f"[Wake] Queue at {self._queue.qsize()}/100 — inference may be slow")
+        except queue.Full:
+            log.warning("[Wake] Queue full — frame dropped (inference thread may be blocked)")
         except Exception as e:
             log.debug("{}", e)
 

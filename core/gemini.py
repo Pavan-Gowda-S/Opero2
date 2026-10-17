@@ -127,7 +127,7 @@ _LADDERS = {
 
 # The Live model to use for one-shot calls. main.py owns the real one; this is
 # only the fallback for when this module is imported without it (tests).
-_LIVE_FALLBACK = "models/gemini-3.1-flash-live-preview"
+_LIVE_FALLBACK = "models/gemini-2.5-flash-native-audio-latest"
 
 # How many one-shot Live sessions may exist at once.
 #

@@ -115,12 +115,16 @@ class AssemblyAIVoice:
         """Accept one final event, not its immediate websocket redelivery."""
         normalized = " ".join(text.casefold().split())
         now = time.monotonic()
-        # Final events are normally emitted once; 1 second only covers an
-        # immediate duplicate. A real second utterance is allowed afterwards.
+        # Extended window to 5 seconds to catch redeliveries during network jitter
+        # or reconnections. Keep last 20 entries to prevent unbounded growth.
         self._recent_finals = {
             key: seen for key, seen in self._recent_finals.items()
-            if now - seen < 1.0
+            if now - seen < 5.0
         }
+        # Trim to last 20 if dict grows too large
+        if len(self._recent_finals) > 20:
+            sorted_items = sorted(self._recent_finals.items(), key=lambda x: x[1])
+            self._recent_finals = dict(sorted_items[-20:])
         if normalized in self._recent_finals:
             return False
         self._recent_finals[normalized] = now
