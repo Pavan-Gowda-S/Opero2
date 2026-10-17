@@ -210,6 +210,14 @@ class MainWindow(QMainWindow):
         self._hud_cam_stack.addWidget(self.hud)
         self._hud_cam_stack.addWidget(_cam_cont)
 
+        # TinyFish workspace panel (hidden by default, shown when tinyfish_mode ON)
+        from ui.tinyfish_panel import TinyFishWorkspacePanel
+        self._tinyfish_panel = TinyFishWorkspacePanel()
+        self._tinyfish_panel.hide()
+        self._tinyfish_panel.search_requested.connect(self._on_tinyfish_search)
+        self._tinyfish_panel.search_cancelled.connect(self._on_tinyfish_cancel)
+        self._tinyfish_worker = None  # Current search worker thread
+
         self._center_split = QSplitter(Qt.Orientation.Vertical)
         self._center_split.setStyleSheet(f"""
             QSplitter::handle {{
@@ -221,15 +229,28 @@ class MainWindow(QMainWindow):
             }}
         """)
         self._center_split.addWidget(self._hud_cam_stack)
-        self._center_split.addWidget(self._content_panel)
-        self._center_split.addWidget(self._quiz_panel)
+        self._center_split.addWidget(self._tinyfish_panel)  # Index 1 - TinyFish workspace
+        self._center_split.addWidget(self._content_panel)    # Index 2 - Content
+        self._center_split.addWidget(self._quiz_panel)       # Index 3 - Quiz
         self._center_split.setStretchFactor(0, 3)
         self._center_split.setStretchFactor(1, 1)
+        self._center_split.setStretchFactor(2, 1)
         self._center_split.setCollapsible(0, False)
         body.addWidget(self._center_split, stretch=5)
 
         self._right_panel = self._build_right_panel()
         body.addWidget(self._right_panel, stretch=0)
+
+        # Update TinyFish panel and agent timeline visibility based on config (Phase 4)
+        from memory.config_manager import get_tinyfish_mode
+        if get_tinyfish_mode():
+            self._tinyfish_panel.show()
+            self._agent_timeline.show()
+            # Load history preview on startup if TinyFish mode already ON (Phase 4 Patch)
+            self._agent_timeline.load_history_preview()
+        else:
+            self._tinyfish_panel.hide()
+            self._agent_timeline.hide()
 
         root.addLayout(body, stretch=1)
         root.addWidget(self._build_footer())
@@ -1028,6 +1049,13 @@ class MainWindow(QMainWindow):
             l.setStyleSheet(f"color: {C.TEXT_MED}; background: transparent;")
             return l
 
+        # Agent Timeline (Phase 4) - shown when TinyFish mode ON, replaces activity log header
+        from ui.agent_timeline import AgentTimelineWidget
+        self._agent_timeline = AgentTimelineWidget()
+        self._agent_timeline.hide()  # Hidden by default, shown when TinyFish mode ON
+        self._agent_timeline.stop_requested.connect(self._on_agent_stop_requested)
+        lay.addWidget(self._agent_timeline)
+
         lay.addWidget(_sec("Activity Log"))
         self._log = LogWidget()
         lay.addWidget(self._log, stretch=1)
@@ -1235,6 +1263,14 @@ class MainWindow(QMainWindow):
         self._voice_engine_btn.clicked.connect(self._toggle_voice_engine)
         lay.addWidget(self._voice_engine_btn)
         self._refresh_voice_engine_btn()
+
+        self._tinyfish_btn = QPushButton()
+        self._tinyfish_btn.setFixedHeight(28)
+        self._tinyfish_btn.setFont(QFont("Segoe UI", 7))
+        self._tinyfish_btn.setCursor(Qt.CursorShape.PointingHandCursor)
+        self._tinyfish_btn.clicked.connect(self._toggle_tinyfish_mode)
+        lay.addWidget(self._tinyfish_btn)
+        self._refresh_tinyfish_btn()
 
         audio_btn = QPushButton("🎧  AUDIO DEVICES")
         audio_btn.setFixedHeight(28)
@@ -2133,6 +2169,133 @@ class MainWindow(QMainWindow):
                 cb()
             except Exception:
                 pass
+
+    def _refresh_tinyfish_btn(self):
+        """Update the TINYFISH button to reflect the current mode state."""
+        from memory.config_manager import get_tinyfish_mode, has_tinyfish_key
+        is_enabled = get_tinyfish_mode()
+        has_key = has_tinyfish_key()
+
+        if is_enabled:
+            self._tinyfish_btn.setText("◈  TINYFISH: ON")
+            self._tinyfish_btn.setStyleSheet(f"""
+                QPushButton {{
+                    background: {C.PRI_GHO}; color: {C.PRI};
+                    border: 1px solid {C.PRI_DIM}; border-radius: 6px;
+                    text-align: left; padding: 0 10px;
+                }}
+                QPushButton:hover {{ background: {C.PRI_GHO}; border-color: {C.PRI}; }}
+            """)
+            self._tinyfish_btn.setToolTip("TinyFish workspace is active. Tap to disable.")
+        else:
+            self._tinyfish_btn.setText("◈  TINYFISH: OFF")
+            self._tinyfish_btn.setStyleSheet(f"""
+                QPushButton {{
+                    background: transparent; color: {C.TEXT_MED};
+                    border: 1px solid {C.BORDER}; border-radius: 6px;
+                    text-align: left; padding: 0 10px;
+                }}
+                QPushButton:hover {{ color: {C.PRI}; border-color: {C.BORDER_B}; }}
+            """)
+            if has_key:
+                self._tinyfish_btn.setToolTip("TinyFish workspace is disabled. Tap to enable.")
+            else:
+                self._tinyfish_btn.setToolTip("TinyFish workspace requires API key. Add it in API KEYS.")
+
+    def _toggle_tinyfish_mode(self):
+        """Toggle TinyFish workspace mode and persist to config."""
+        from memory.config_manager import get_tinyfish_mode, set_tinyfish_mode, has_tinyfish_key
+
+        if not has_tinyfish_key():
+            self._log.append_log("SYS: TinyFish API key not configured. Open API KEYS to add it.")
+            return
+
+        current = get_tinyfish_mode()
+        new_state = not current
+        set_tinyfish_mode(new_state)
+        self._refresh_tinyfish_btn()
+
+        # Show/hide TinyFish workspace panel and agent timeline (Phase 4)
+        if new_state:
+            self._tinyfish_panel.show()
+            self._agent_timeline.show()
+            # Give workspace panel prominent space in the vertical splitter
+            total_h = self._center_split.height() or 800
+            self._center_split.setSizes([int(total_h * 0.35), int(total_h * 0.65), 0, 0])
+            # Load history preview when timeline becomes visible (Phase 4 Patch)
+            self._agent_timeline.load_history_preview()
+        else:
+            self._tinyfish_panel.hide()
+            self._agent_timeline.hide()
+            # Restore HUD to full size
+            total_h = self._center_split.height() or 800
+            self._center_split.setSizes([total_h, 0, 0, 0])
+            # Reset timeline when TinyFish mode turned OFF
+            self._agent_timeline.reset()
+
+        status = "ON" if new_state else "OFF"
+        self._log.append_log(f"SYS: TinyFish workspace → {status}")
+
+    def _on_tinyfish_search(self, query: str, mode: str):
+        """Handle TinyFish search request from workspace panel."""
+        from ui.tinyfish_worker import TinyFishSearchWorker
+
+        # Cancel any existing search
+        if self._tinyfish_worker is not None:
+            self._tinyfish_worker.cancel()
+            self._tinyfish_worker.wait()
+
+        # Clear previous results
+        self._tinyfish_panel.clear_results()
+
+        # Create and start worker
+        self._tinyfish_worker = TinyFishSearchWorker(query, mode)
+        self._tinyfish_worker.result_ready.connect(self._on_tinyfish_result)
+        self._tinyfish_worker.error_occurred.connect(self._on_tinyfish_error)
+        self._tinyfish_worker.finished.connect(self._on_tinyfish_finished)
+        self._tinyfish_worker.start()
+
+        # Log the search
+        search_type = "Quick Search" if mode == "quick" else "Deep Research"
+        self._log.append_log(f"TinyFish: {search_type} → {query}")
+
+    def _on_tinyfish_cancel(self):
+        """Handle TinyFish search cancellation request."""
+        if self._tinyfish_worker is not None:
+            self._tinyfish_worker.cancel()
+            self._log.append_log("TinyFish: Search cancelled")
+
+    def _on_tinyfish_result(self, result: dict):
+        """Handle TinyFish search result (main thread)."""
+        if result.get('type') == 'deep_research':
+            # Deep research content
+            content = result.get('content', '')
+            self._tinyfish_panel.set_deep_research_content(content)
+        else:
+            # Quick search result card
+            title = result.get('title', 'Untitled')
+            url = result.get('url', '')
+            snippet = result.get('snippet', '')
+            self._tinyfish_panel.add_result_card(title, url, snippet)
+
+        # Show export toolbar after first result (Phase 5)
+        self._tinyfish_panel.show_export_toolbar(True)
+
+    def _on_tinyfish_error(self, error_msg: str):
+        """Handle TinyFish search error (main thread)."""
+        self._tinyfish_panel.show_error(error_msg)
+        self._log.append_log(f"TinyFish: Error — {error_msg}")
+
+    def _on_tinyfish_finished(self):
+        """Handle TinyFish search completion (main thread)."""
+        self._tinyfish_panel.set_searching(False)
+        self._tinyfish_worker = None
+
+    def _on_agent_stop_requested(self):
+        """Handle agent timeline stop request (Phase 4 Patch)."""
+        if self._tinyfish_worker is not None:
+            self._tinyfish_worker.cancel()
+        self._log.append_log("TinyFish: Stop requested by user")
 
     def _toggle_ptt(self):
         from memory.config_manager import (get_push_to_talk_enabled,

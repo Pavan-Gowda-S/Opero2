@@ -9,7 +9,7 @@
 ![Python](https://img.shields.io/badge/Python-3.11%2B-55c8ff?style=for-the-badge&logo=python&logoColor=white)
 ![Desktop](https://img.shields.io/badge/Desktop-PyQt6-20d67a?style=for-the-badge)
 ![Voice](https://img.shields.io/badge/Voice-Gemini%20Live-e0ad36?style=for-the-badge)
-![Tests](https://img.shields.io/badge/Tests-84%20passed-4CAF50?style=for-the-badge)
+![Tests](https://img.shields.io/badge/Tests-218%20passed-4CAF50?style=for-the-badge)
 ![License](https://img.shields.io/badge/License-MIT-9d7bff?style=for-the-badge)
 
 <sub>OPERO listens, reasons, acts, and reports the verified result.</sub>
@@ -358,6 +358,257 @@ Configuration is stored at `config/api_keys.json` (gitignored):
 - Dashboard is localhost-only with CORS, rate limiting, and security headers
 - All tool parameters are validated before execution
 - Human confirmation gate prevents irreversible actions
+
+---
+
+## ◈ // TINYFISH MODE
+
+### What is TinyFish Mode?
+
+TinyFish Mode extends Opero with advanced web research and browser automation capabilities through [TinyFish](https://tinyfish.ai), enabling intelligent opportunity discovery, automated form pre-filling, and comprehensive research with source citations—all with multi-layer safety gates.
+
+**Key capabilities:**
+- **Quick Search** - Fast web queries with ranked result cards
+- **Deep Research** - Multi-source synthesis with citations and markdown formatting
+- **Apply Flow** - Opportunity discovery, match scoring, and automated form pre-fill with halt-before-submit guarantee
+- **Live Agent Timeline** - Real-time status tracking for all operations
+- **PDF Export** - One-click professional reports with WhatsApp integration
+
+### Setup
+
+#### Prerequisites
+- Node.js 18+ (required for TinyFish service)
+- TinyFish API key ([get one at tinyfish.ai](https://tinyfish.ai))
+
+#### Installation
+
+1. **Install Node.js dependencies:**
+```powershell
+cd tinyfish_service
+npm install
+```
+
+2. **Configure API key** (choose one method):
+
+**Option A: Root `.env` file (recommended)**
+```bash
+# .env (in project root)
+TINYFISH_API_KEY=your_api_key_here
+```
+
+**Option B: `config/api_keys.json`**
+```json
+{
+  "gemini_api_key": "...",
+  "tinyfish_api_key": "your_api_key_here"
+}
+```
+
+3. **Verify service:**
+```powershell
+cd tinyfish_service
+node --env-file=../.env index.js search --query="test" --limit=1
+```
+
+If successful, you'll see JSON output with search results.
+
+### How to Use
+
+#### Enabling TinyFish Mode
+
+1. Launch Opero: `python main.py`
+2. Click the **TinyFish toggle** in the header controls
+3. The right panel switches to **Agent Timeline** widget
+4. The bottom workspace expands with three tabs
+
+#### Quick Search
+
+**Voice command:**
+```
+"Opero, search for Python AI internships"
+```
+
+**Text command:**
+```
+search for Python AI internships
+```
+
+**Result:** 3-5 result cards with titles, URLs, and snippets appear in the Quick Search tab within 5-15 seconds.
+
+#### Deep Research
+
+**Voice command:**
+```
+"Opero, research latest developments in agentic AI"
+```
+
+**Text command:**
+```
+research latest developments in agentic AI
+```
+
+**Result:** Comprehensive markdown-formatted report with:
+- Executive summary
+- Key findings (bullet points)
+- Numbered source citations
+- Delivery time: 30-60 seconds
+
+#### Apply Flow (Automated Form Pre-Fill)
+
+**Step 1: Search for opportunities**
+1. Switch to **🎯 Apply Flow** tab
+2. Enter search: `Python AI internship` or `hackathons for students`
+3. Click **🔍 Find Matches**
+
+**Step 2: Review ranked results**
+- Each opportunity card shows:
+  - Match score badge (0-100%, color-coded)
+  - Match rationale (why it fits your profile)
+  - Deadline and location
+  - **[📝 Review & Apply]** button
+
+**Step 3: Pre-submission review**
+- Click **[📝 Review & Apply]** on any opportunity
+- **Pre-Fill Review Dialog** appears showing:
+  - Exact field-value mappings (e.g., "Full Name: John Doe")
+  - Confidence scores (Profile: 100%, Synthesized: 80%, Inferred: 50%)
+  - Generated cover note (tailored to the opportunity)
+  - **Safety warning:** Agent will halt before submit button
+
+**Step 4: Confirm and pre-fill**
+- Review all field mappings
+- Click **[Proceed to Pre-Fill]**
+- Agent opens browser, navigates to form, fills fields
+- **Timeline shows: "● HALTED BEFORE SUBMIT: Ready for manual review"**
+
+**Step 5: Manual submission**
+- Review pre-filled form in browser window
+- **You must manually click Submit** to complete application
+
+### Workspace Features
+
+| Feature | Tab | Purpose |
+|---------|-----|---------|
+| **Quick Search** | 🔍 Quick Search | Fast web queries, result cards with titles/URLs/snippets |
+| **Deep Research** | 📚 Deep Research | Multi-source synthesis, markdown reports with citations |
+| **Apply Flow** | 🎯 Apply Flow | Opportunity discovery, match scoring, form pre-fill |
+| **Agent Timeline** | Right panel | Real-time status (IDLE → PENDING → RUNNING → COMPLETED) |
+| **PDF Export** | Export toolbar | Generate professional PDF reports from any results |
+| **WhatsApp Share** | Export toolbar | Share PDFs via WhatsApp Desktop |
+
+### Safety Architecture
+
+TinyFish Mode enforces a **4-layer safety system** to prevent unauthorized submissions and payment processing:
+
+#### Layer 1: Pre-Execution Review (UI Gate)
+- **Field Mapping Table** - Every field and value shown before execution
+- **Confidence Scores** - Profile (100%), Synthesized (60-90%), Inferred (<60%)
+- **Safety Warnings** - Explicit "halt before submit" guarantee
+- **Explicit Confirmation** - User must click "Proceed to Pre-Fill"
+
+#### Layer 2: Form Safety Validation
+Runs before agent execution:
+- **Payment Detection** - Blocks forms with: credit card, CVV, billing address fields
+- **Goal Validation** - Blocks prohibited patterns:
+  - Payment/purchase keywords
+  - Account deletion/password changes
+  - Social media posting
+  - Data scraping
+  - Mass operations
+- **Required Field Check** - Halts if required fields are missing or unknown
+
+#### Layer 3: Agent Runtime Constraint
+- **Explicit Halt Instruction** - Agent goal includes: "DO NOT CLICK SUBMIT. STOP BEFORE THE FINAL SUBMIT BUTTON."
+- **Timeline Updates** - Live status tracking shows each step
+- **Stop Button** - User can cancel operation mid-execution
+
+#### Layer 4: Post-Execution Safety Net
+- **Submission Indicator Scan** - Checks for confirmation pages
+- **Security Violation Logging** - Alerts if unauthorized submit detected
+- **Browser State Verification** - Confirms form is still editable
+
+**Safety Guarantees:**
+- ✅ **Never auto-submit** - Agent always halts before final submit button
+- ✅ **Never process payments** - Payment forms trigger immediate block
+- ✅ **Never fabricate data** - Unknown fields flagged as "[UNKNOWN - User input needed]"
+- ✅ **Always confirm** - Mandatory pre-execution review with exact field-value pairs
+
+### Cost & Credit Information
+
+| Operation | Cost | Notes |
+|-----------|------|-------|
+| Quick Search | **Free** | No TinyFish credits consumed |
+| Deep Research | ~$0.05 - $0.20 USD | Varies by source count |
+| Form Pre-Fill (Agent) | ~$0.10 - $1.00 USD | Remote browser automation |
+| PDF Export | **Free** | Local generation, no API calls |
+
+**Credit Guard:** Before billable agent operations, Opero displays:
+```
+⚠️ Estimated Cost: ~$0.10 - $1.00 USD (Remote Browser Agent)
+This operation will use TinyFish credits from your account.
+```
+
+**Wallet Management:** Check balance and add funds at [tinyfish.ai/wallet](https://tinyfish.ai/wallet)
+
+### Error Handling
+
+TinyFish Mode provides **human-readable error messages** with clear next steps:
+
+| Error | Meaning | Solution |
+|-------|---------|----------|
+| "TinyFish API key not found" | Missing configuration | Add `TINYFISH_API_KEY` to `.env` or `config/api_keys.json` |
+| "TinyFish rate limit reached" | Too many requests | Wait 60 seconds before retrying |
+| "Operation timed out" | Agent exceeded 10-minute limit | Remote agent may still be active; check TinyFish dashboard |
+| "Navigation blocked: Safety filters triggered" | Prohibited goal pattern detected | Reformulate goal to avoid payment/account modification keywords |
+| "CAPTCHA detected" | Site has bot protection | Complete CAPTCHA manually in browser window |
+| "Payment form blocked" | Form requests credit card/billing | Apply manually—Opero never handles financial transactions |
+| "Form structure changed" | Site redesign broke selectors | Apply manually at provided URL |
+
+**No Stack Traces:** All user-facing errors are clean, actionable messages—never raw exceptions or HTTP codes.
+
+### Troubleshooting
+
+#### TinyFish service won't start
+```powershell
+cd tinyfish_service
+npm install
+node --env-file=../.env index.js search --query="test" --limit=1
+```
+If this fails, check:
+- Node.js version: `node --version` (must be 18+)
+- API key in `.env` file
+- No firewall blocking Node.js
+
+#### Search returns no results
+- **Check API key:** Verify `TINYFISH_API_KEY` in `.env` or `config/api_keys.json`
+- **Check rate limits:** Wait 60 seconds if you've made multiple requests
+- **Check query:** Try a simpler, more general search term
+
+#### Agent timeout
+- **Expected behavior:** Complex forms may take 2-4 minutes
+- **Remote execution:** Even if local UI times out, remote agent may still complete
+- **Check status:** Use TinyFish dashboard to verify run completion
+
+#### PDF export fails
+- **Check permissions:** Ensure write access to `reports/` directory
+- **Check dependencies:** Verify ReportLab installed: `pip list | grep reportlab`
+- **Manual open:** PDF saved to `reports/Deep_Research_YYYYMMDD_HHMMSS.pdf`
+
+#### WhatsApp share not working
+- **Requires WhatsApp Desktop:** Install from [whatsapp.com/download](https://www.whatsapp.com/download)
+- **Windows:** Uses `shell:AppsFolder\5319275A.WhatsAppDesktop_cv1g1gvanyjgm!App`
+- **Mac/Linux:** Uses `open` / `xdg-open` with `whatsapp://` URI
+
+### Responsible Use
+
+- **Review before confirming:** Always check field mappings in Pre-Fill Review Dialog
+- **Never use for payments:** Payment form blocking is enforced—apply manually for purchases
+- **Verify agent-filled data:** Check browser window before manually clicking Submit
+- **Keep API key secure:** Never share or commit your `TINYFISH_API_KEY`
+- **Monitor credit usage:** Track consumption at [tinyfish.ai/wallet](https://tinyfish.ai/wallet)
+- **Respect rate limits:** Wait between requests if you hit rate limit errors
+
+---
 
 ## ◈ // LICENSE
 

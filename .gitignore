@@ -61,4 +61,5 @@ whatsapp_bridge/.wwebjs_cache/
 .test-tmp/
 .env
 .env.*
-!.env.example
+!.env.examplereports/
+*.pdf

@@ -1050,6 +1050,44 @@ class OperaLive:
         if self._wake_enabled and not self._awake:
             self.ui.write_log("SYS: I'm asleep — say 'Hey opero' or tap WAKE NOW first.")
             return
+
+        # Phase 4 Patch: Voice routing for TinyFish workspace
+        from memory.config_manager import get_tinyfish_mode
+        if get_tinyfish_mode():
+            text_lower = text.lower().strip()
+
+            # Quick search patterns
+            if (text_lower.startswith("search for ") or
+                text_lower.startswith("quick search ") or
+                text_lower.startswith("search ")):
+                # Extract query
+                if text_lower.startswith("search for "):
+                    query = text[len("search for "):].strip()
+                elif text_lower.startswith("quick search "):
+                    query = text[len("quick search "):].strip()
+                else:
+                    query = text[len("search "):].strip()
+
+                if query:
+                    self.ui._tinyfish_panel.trigger_search(query, mode="quick")
+                    return
+
+            # Deep research patterns
+            if (text_lower.startswith("research ") or
+                text_lower.startswith("deep research ") or
+                text_lower.startswith("look up ")):
+                # Extract query
+                if text_lower.startswith("research "):
+                    query = text[len("research "):].strip()
+                elif text_lower.startswith("deep research "):
+                    query = text[len("deep research "):].strip()
+                else:
+                    query = text[len("look up "):].strip()
+
+                if query:
+                    self.ui._tinyfish_panel.trigger_search(query, mode="deep")
+                    return
+
         asyncio.run_coroutine_threadsafe(
             self.session.send_client_content(
                 turns={"role": "user", "parts": [{"text": text}]},

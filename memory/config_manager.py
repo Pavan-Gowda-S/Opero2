@@ -455,3 +455,34 @@ def get_assemblyai_key() -> str | None:
 
 def save_assemblyai_key(key: str) -> None:
     _patch_config(assemblyai_api_key=(key or "").strip())
+
+
+# ── TinyFish integration ──────────────────────────────────────────────────────
+
+def get_tinyfish_mode() -> bool:
+    """Return the persisted TinyFish workspace toggle state. Default: False."""
+    return bool(load_api_keys().get("tinyfish_mode", False))
+
+
+def set_tinyfish_mode(enabled: bool) -> None:
+    """Persist TinyFish workspace toggle state to config."""
+    _patch_config(tinyfish_mode=bool(enabled))
+
+
+def has_tinyfish_key() -> bool:
+    """Return True if tinyfish_api_key is set and non-empty. Never log or return the key itself."""
+    key = load_api_keys().get("tinyfish_api_key")
+    if key and isinstance(key, str) and len(key.strip()) > 0:
+        return True
+    # Fallback to root .env file / environment variable
+    import os
+    env_key = os.environ.get("TINYFISH_API_KEY")
+    if env_key and len(env_key.strip()) > 0:
+        return True
+    try:
+        from dotenv import dotenv_values
+        env_dict = dotenv_values(BASE_DIR / ".env")
+        val = env_dict.get("TINYFISH_API_KEY")
+        return bool(val and len(str(val).strip()) > 0)
+    except Exception:
+        return False

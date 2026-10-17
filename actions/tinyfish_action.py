@@ -39,6 +39,8 @@ Phase 3 Agent Safety Limitations:
 import json
 import subprocess
 import sys
+import os
+import platform
 from pathlib import Path
 from typing import Optional
 
@@ -480,6 +482,74 @@ def _format_agent_response(response: dict, url: str, goal: str) -> str:
     return "\n".join(output)
 
 
+def _generate_report(
+    run_id: Optional[str] = None,
+    title: Optional[str] = None,
+    auto_open: bool = True,
+) -> str:
+    """
+    Generate a PDF report from TinyFish agent operation.
+
+    Phase 5 addition: Creates professional PDF reports from operation history.
+
+    Args:
+        run_id: Specific run ID to report on (uses latest if None)
+        title: Custom report title (auto-generated if None)
+        auto_open: Open PDF in system viewer after generation (default: True)
+
+    Returns:
+        str: Success message with file path
+    """
+    try:
+        # Import report generator
+        from actions.report_generator import generate_report_from_history
+
+        # Generate PDF
+        pdf_path = generate_report_from_history(run_id=run_id, title=title)
+
+        log.info(f"[TinyFish] PDF report generated: {pdf_path}")
+
+        # Open in system viewer if requested
+        if auto_open:
+            _open_pdf(pdf_path)
+
+        return (
+            f"✅ PDF report generated successfully:\n\n"
+            f"Location: {pdf_path}\n"
+            f"File size: {pdf_path.stat().st_size / 1024:.1f} KB\n\n"
+            f"{'The report has been opened in your default PDF viewer.' if auto_open else 'Use your PDF viewer to open the report.'}"
+        )
+
+    except Exception as e:
+        log.error(f"[TinyFish] Report generation failed: {e}")
+        return f"Report generation failed: {e}"
+
+
+def _open_pdf(pdf_path: Path) -> None:
+    """
+    Open PDF file in system's default viewer.
+
+    Cross-platform implementation for Windows/macOS/Linux.
+
+    Args:
+        pdf_path: Path to PDF file
+    """
+    try:
+        system = platform.system()
+
+        if system == "Windows":
+            os.startfile(str(pdf_path))
+        elif system == "Darwin":  # macOS
+            subprocess.run(["open", str(pdf_path)], check=False)
+        else:  # Linux and others
+            subprocess.run(["xdg-open", str(pdf_path)], check=False)
+
+        log.info(f"[TinyFish] Opened PDF: {pdf_path}")
+
+    except Exception as e:
+        log.warning(f"[TinyFish] Failed to open PDF: {e}")
+
+
 def _save_to_history(url: str, goal: str, response: dict) -> None:
     """
     Save agent operation to lightweight history file.
@@ -603,11 +673,11 @@ def tinyfish_search(
             )
 
         elif operation == "agent":
-            url = params.get("url", "").strip()
-            goal = params.get("goal", "").strip()
+            url = (params.get("url") or "").strip()
+            goal = (params.get("goal") or "").strip()
 
             if not url:
-                return "Please provide a target URL for agent operation"
+                return "Please provide a target URL for agent operation (e.g., https://example.com)"
             if not goal:
                 return "Please provide a goal/task description for agent operation"
 
@@ -619,8 +689,20 @@ def tinyfish_search(
                 browser_profile=params.get("browser_profile", "lite"),
             )
 
+        elif operation == "generate_report":
+            # Phase 5: Generate PDF report from agent operation
+            run_id = params.get("run_id")
+            title = params.get("title")
+            auto_open = params.get("auto_open", True)
+
+            return _generate_report(
+                run_id=run_id,
+                title=title,
+                auto_open=auto_open,
+            )
+
         else:
-            return f"Unknown operation: {operation}. Use 'search', 'fetch', or 'agent'."
+            return f"Unknown operation: {operation}. Use 'search', 'fetch', 'agent', or 'generate_report'."
 
     except Exception as e:
         log.error(f"[TinyFish] Handler error: {e}")
@@ -632,9 +714,10 @@ def tinyfish_search(
 TOOL = {
     "name": "tinyfish_search",
     "description": (
-        "Advanced web search, content extraction, and browser automation using TinyFish. "
+        "Advanced web search, content extraction, browser automation, and PDF report generation using TinyFish. "
         "Operations: 'search' (web search with geo-targeting), 'fetch' (extract content from 1-10 URLs), "
-        "'agent' (multi-step browser automation for browsing, navigation, and information extraction). "
+        "'agent' (multi-step browser automation for browsing, navigation, and information extraction), "
+        "'generate_report' (create professional PDF report from agent operation history). "
         ""
         "AGENT SAFETY LIMITATIONS: Request validation rejects obviously unsafe goals but CANNOT enforce "
         "browser-level interaction restrictions. The SDK does not prevent specific interactions once a goal "
@@ -647,7 +730,7 @@ TOOL = {
         "properties": {
             "operation": {
                 "type": "STRING",
-                "description": "Operation type: 'search', 'fetch', or 'agent'"
+                "description": "Operation type: 'search', 'fetch', 'agent', or 'generate_report'"
             },
             "query": {
                 "type": "STRING",
@@ -699,6 +782,18 @@ TOOL = {
             "browser_profile": {
                 "type": "STRING",
                 "description": "Browser profile for agent: 'lite' or 'stealth' (default: lite)"
+            },
+            "run_id": {
+                "type": "STRING",
+                "description": "Run ID for report generation (uses latest if omitted)"
+            },
+            "title": {
+                "type": "STRING",
+                "description": "Custom title for generated PDF report"
+            },
+            "auto_open": {
+                "type": "BOOLEAN",
+                "description": "Auto-open PDF in system viewer (default: true)"
             }
         },
         "required": ["operation"]
