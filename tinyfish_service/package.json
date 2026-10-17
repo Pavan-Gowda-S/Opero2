@@ -1,0 +1,19 @@
+{
+  "name": "opero-tinyfish-service",
+  "version": "1.0.0",
+  "description": "TinyFish SDK wrapper for Opero2 - subprocess-based integration",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "test": "node index.js search --query test --dry-run"
+  },
+  "keywords": ["tinyfish", "opero", "web-automation"],
+  "author": "Opero2",
+  "license": "MIT",
+  "dependencies": {
+    "@tiny-fish/sdk": "^0.8.0"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
