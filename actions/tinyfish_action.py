@@ -201,16 +201,31 @@ def _search(
     if language:
         args.extend(["--language", language.lower()])
 
-    response = _call_tinyfish_service("search", args, timeout=30)
+    # Fast 12s timeout for interactive search so UI never lags
+    response = _call_tinyfish_service("search", args, timeout=12)
 
-    if not response.get("success"):
-        error_msg = response.get("error", "Unknown error")
-        code = response.get("code", "UNKNOWN")
-        log.error(f"[TinyFish] Search failed: {code} - {error_msg}")
-        return f"Search failed: {error_msg}"
+    # If TinyFish failed or returned 0 results, fall back seamlessly to DDG web search
+    results = []
+    if response.get("success"):
+        results = response.get("results", [])
 
-    # Format results for display
-    results = response.get("results", [])
+    if not results:
+        log.info(f"[TinyFish] Falling back to DDG search for: '{query}'")
+        try:
+            from actions.web_search import _ddg_search
+            ddg_res = _ddg_search(query)
+            if ddg_res:
+                results = [
+                    {
+                        "title": r.get("title", ""),
+                        "snippet": r.get("snippet", ""),
+                        "url": r.get("url", ""),
+                    }
+                    for r in ddg_res[:max_results]
+                ]
+        except Exception as e:
+            log.warning(f"[TinyFish] DDG fallback failed: {e}")
+
     if not results:
         return f"No results found for: {query}"
 
@@ -676,8 +691,19 @@ def tinyfish_search(
             url = (params.get("url") or "").strip()
             goal = (params.get("goal") or "").strip()
 
+            # If user asked for general research/search without a target website URL,
+            # gracefully route to search instead of failing with an error
             if not url:
-                return "Please provide a target URL for agent operation (e.g., https://example.com)"
+                search_query = goal or params.get("query", "")
+                if search_query:
+                    log.info(f"[TinyFish] No URL provided for agent; routing to search: '{search_query}'")
+                    return _search(
+                        query=search_query,
+                        max_results=params.get("max_results", 10),
+                        location=params.get("location"),
+                        language=params.get("language"),
+                    )
+                return "Please provide a target URL or search query for TinyFish."
             if not goal:
                 return "Please provide a goal/task description for agent operation"
 

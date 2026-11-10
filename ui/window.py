@@ -2240,10 +2240,9 @@ class MainWindow(QMainWindow):
         """Handle TinyFish search request from workspace panel."""
         from ui.tinyfish_worker import TinyFishSearchWorker
 
-        # Cancel any existing search
-        if self._tinyfish_worker is not None:
+        # Cancel any existing search without blocking the main UI thread
+        if self._tinyfish_worker is not None and self._tinyfish_worker.isRunning():
             self._tinyfish_worker.cancel()
-            self._tinyfish_worker.wait()
 
         # Clear previous results
         self._tinyfish_panel.clear_results()

@@ -1,0 +1,103 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 280" width="100%" height="100%">
+  <defs>
+    <linearGradient id="cardGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#0b1a2d" />
+      <stop offset="100%" stop-color="#060f1b" />
+    </linearGradient>
+    <linearGradient id="neonGreen" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#00f5d4" />
+      <stop offset="100%" stop-color="#00bbf9" />
+    </linearGradient>
+    <linearGradient id="warningGlow" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ffb703" />
+      <stop offset="100%" stop-color="#fb8500" />
+    </linearGradient>
+    <style>
+      .card-title { font-family: 'Segoe UI', system-ui, sans-serif; font-size: 13px; font-weight: 800; letter-spacing: 1.5px; fill: #00f5d4; }
+      .card-sub { font-family: 'Segoe UI', system-ui, sans-serif; font-size: 11px; fill: #88a4be; }
+      .card-num { font-family: 'Segoe UI', system-ui, sans-serif; font-size: 26px; font-weight: 900; fill: #00bbf9; opacity: 0.35; }
+      .arrow { fill: none; stroke: #00bbf9; stroke-width: 2; stroke-dasharray: 4 2; }
+    </style>
+  </defs>
+
+  <!-- Layer 1 -->
+  <g transform="translate(20, 20)">
+    <rect width="215" height="240" rx="12" fill="url(#cardGrad)" stroke="#00f5d4" stroke-width="1.2" stroke-opacity="0.6" />
+    <text x="180" y="42" class="card-num">01</text>
+    <text x="20" y="38" class="card-title">LAYER 1</text>
+    <text x="20" y="58" font-family="'Segoe UI', sans-serif" font-size="14" font-weight="700" fill="#ffffff">UI Review Gate</text>
+    
+    <line x1="20" y1="72" x2="195" y2="72" stroke="#00f5d4" stroke-opacity="0.3" stroke-width="1" />
+    
+    <text x="20" y="100" class="card-sub">• Field Mapping Table</text>
+    <text x="20" y="122" class="card-sub">• Confidence Ratings</text>
+    <text x="20" y="144" class="card-sub">• Transparent Plan Review</text>
+    <text x="20" y="166" class="card-sub">• Tailored Cover Note</text>
+    
+    <rect x="20" y="190" width="175" height="30" rx="6" fill="#00f5d4" fill-opacity="0.12" stroke="#00f5d4" stroke-width="0.8" />
+    <text x="107" y="210" text-anchor="middle" font-family="'Segoe UI', sans-serif" font-size="11" font-weight="700" fill="#00f5d4">HUMAN APPROVAL</text>
+  </g>
+
+  <!-- Arrow 1 -> 2 -->
+  <path d="M 245 140 L 265 140" class="arrow" />
+
+  <!-- Layer 2 -->
+  <g transform="translate(275, 20)">
+    <rect width="215" height="240" rx="12" fill="url(#cardGrad)" stroke="#00bbf9" stroke-width="1.2" stroke-opacity="0.6" />
+    <text x="180" y="42" class="card-num">02</text>
+    <text x="20" y="38" class="card-title" fill="#00bbf9">LAYER 2</text>
+    <text x="20" y="58" font-family="'Segoe UI', sans-serif" font-size="14" font-weight="700" fill="#ffffff">Safety Validator</text>
+    
+    <line x1="20" y1="72" x2="195" y2="72" stroke="#00bbf9" stroke-opacity="0.3" stroke-width="1" />
+    
+    <text x="20" y="100" class="card-sub">• Payment Interceptor</text>
+    <text x="20" y="122" class="card-sub">• CC / CVV Pattern Block</text>
+    <text x="20" y="144" class="card-sub">• PII & Sensitive Fields</text>
+    <text x="20" y="166" class="card-sub">• Form Goal Verification</text>
+    
+    <rect x="20" y="190" width="175" height="30" rx="6" fill="#00bbf9" fill-opacity="0.12" stroke="#00bbf9" stroke-width="0.8" />
+    <text x="107" y="210" text-anchor="middle" font-family="'Segoe UI', sans-serif" font-size="11" font-weight="700" fill="#00bbf9">ZERO FINANCIAL RISK</text>
+  </g>
+
+  <!-- Arrow 2 -> 3 -->
+  <path d="M 500 140 L 520 140" class="arrow" />
+
+  <!-- Layer 3 -->
+  <g transform="translate(530, 20)">
+    <rect width="215" height="240" rx="12" fill="url(#cardGrad)" stroke="#ffb703" stroke-width="1.2" stroke-opacity="0.8" />
+    <text x="180" y="42" class="card-num" fill="#ffb703">03</text>
+    <text x="20" y="38" class="card-title" fill="#ffb703">LAYER 3</text>
+    <text x="20" y="58" font-family="'Segoe UI', sans-serif" font-size="14" font-weight="700" fill="#ffffff">Agent Constraint</text>
+    
+    <line x1="20" y1="72" x2="195" y2="72" stroke="#ffb703" stroke-opacity="0.3" stroke-width="1" />
+    
+    <text x="20" y="100" class="card-sub">• "DO NOT CLICK SUBMIT"</text>
+    <text x="20" y="122" class="card-sub">• Hard Runtime Stop</text>
+    <text x="20" y="144" class="card-sub">• Step & Duration Bound</text>
+    <text x="20" y="166" class="card-sub">• Live Timeline Updates</text>
+    
+    <rect x="20" y="190" width="175" height="30" rx="6" fill="#ffb703" fill-opacity="0.15" stroke="#ffb703" stroke-width="0.8" />
+    <text x="107" y="210" text-anchor="middle" font-family="'Segoe UI', sans-serif" font-size="11" font-weight="700" fill="#ffb703">HALT BEFORE SUBMIT</text>
+  </g>
+
+  <!-- Arrow 3 -> 4 -->
+  <path d="M 755 140 L 775 140" class="arrow" />
+
+  <!-- Layer 4 -->
+  <g transform="translate(785, 20)">
+    <rect width="195" height="240" rx="12" fill="url(#cardGrad)" stroke="#4361ee" stroke-width="1.2" stroke-opacity="0.7" />
+    <text x="160" y="42" class="card-num" fill="#4361ee">04</text>
+    <text x="20" y="38" class="card-title" fill="#4361ee">LAYER 4</text>
+    <text x="20" y="58" font-family="'Segoe UI', sans-serif" font-size="14" font-weight="700" fill="#ffffff">Post-Check Net</text>
+    
+    <line x1="20" y1="72" x2="175" y2="72" stroke="#4361ee" stroke-opacity="0.3" stroke-width="1" />
+    
+    <text x="20" y="100" class="card-sub">• Submission Scanner</text>
+    <text x="20" y="122" class="card-sub">• Confirmation Page Guard</text>
+    <text x="20" y="144" class="card-sub">• Security Violation Log</text>
+    <text x="20" y="166" class="card-sub">• DOM State Verification</text>
+    
+    <rect x="20" y="190" width="155" height="30" rx="6" fill="#4361ee" fill-opacity="0.15" stroke="#4361ee" stroke-width="0.8" />
+    <text x="97" y="210" text-anchor="middle" font-family="'Segoe UI', sans-serif" font-size="11" font-weight="700" fill="#a5b4fc">SECURITY AUDITED</text>
+  </g>
+</svg>

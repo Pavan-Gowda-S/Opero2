@@ -78,44 +78,45 @@ class TinyFishSearchWorker(QThread):
 
     def _parse_and_emit_quick_results(self, result_text: str):
         """Parse TinyFish search result text and emit individual cards."""
-        # TinyFish search returns formatted text with results
-        # Parse and emit each result as a separate card
+        import re
         lines = result_text.split('\n')
 
         current_result = {}
-        in_result = False
+
+        def _emit_current():
+            nonlocal current_result
+            if current_result and (current_result.get('title') or current_result.get('url')):
+                self.result_ready.emit(dict(current_result))
+            current_result = {}
 
         for line in lines:
             if self._cancelled:
                 return
 
             line = line.strip()
-
-            # Detect result boundaries (heuristic parsing)
-            if line.startswith('[') and ']' in line:
-                # Result number: [1], [2], etc.
-                if current_result:
-                    self.result_ready.emit(current_result)
-                current_result = {}
-                in_result = True
+            if not line:
                 continue
 
-            if in_result and line:
-                # First non-empty line after number is likely the title
-                if 'title' not in current_result:
-                    current_result['title'] = line
-                # URL detection (contains http)
-                elif 'url' not in current_result and ('http://' in line or 'https://' in line):
-                    current_result['url'] = line
-                # Everything else is snippet
+            # Detect boundaries: "1. Title" or "[1] Title"
+            m = re.match(r'^(?:\[\d+\]|\d+\.)\s*(.*)$', line)
+            if m:
+                _emit_current()
+                title_text = m.group(1).strip()
+                current_result['title'] = title_text if title_text else "Search Result"
+                continue
+
+            if current_result:
+                if ('http://' in line or 'https://' in line) and 'url' not in current_result:
+                    # Extract URL
+                    url_m = re.search(r'(https?://[^\s]+)', line)
+                    current_result['url'] = url_m.group(1) if url_m else line
                 elif 'snippet' not in current_result:
                     current_result['snippet'] = line
                 else:
                     current_result['snippet'] += ' ' + line
 
-        # Emit last result if exists
-        if current_result and not self._cancelled:
-            self.result_ready.emit(current_result)
+        if not self._cancelled:
+            _emit_current()
 
     def _run_deep_research(self):
         """Execute deep research and emit synthesized content."""

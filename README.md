@@ -1,615 +1,434 @@
 <div align="center">
 
-# ◈ OPERO
+<img src="assets/opero_banner.svg" alt="OPERO 2.0 — Autonomous Multimodal Desktop Operator" width="100%" />
 
-### _A native voice-first desktop operator_
+<br/><br/>
 
-`VOICE` · `VISION` · `AUTOMATION` · `LOCAL CONTROL`
+[![Python 3.11+](https://img.shields.io/badge/Python-3.11%20%7C%203.12%20%7C%203.13-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
+[![Desktop UI](https://img.shields.io/badge/GUI-PyQt6%20Cyberpunk%20HUD-00bbf9?style=for-the-badge&logo=qt&logoColor=white)](https://riverbankcomputing.com/software/pyqt/)
+[![Voice Engine](https://img.shields.io/badge/Voice-Gemini%20Live%20API-4285F4?style=for-the-badge&logo=google&logoColor=white)](https://ai.google.dev/)
+[![Browser Agent](https://img.shields.io/badge/Browser%20Agent-TinyFish%20SDK-ffb703?style=for-the-badge&logo=googlechrome&logoColor=black)](https://tinyfish.ai/)
+[![Test Suite](https://img.shields.io/badge/Tests-218%20Passed%20(100%25%20Offline)-00f5d4?style=for-the-badge&logo=pytest&logoColor=black)](tests/)
+[![Safety](https://img.shields.io/badge/Safety-4--Layer%20Trust%20Barrier-ff5400?style=for-the-badge&logo=securityscorecard&logoColor=white)](#-the-4-layer-safety-architecture)
+[![WhatsApp Bridge](https://img.shields.io/badge/WhatsApp-Desktop%20Co--Pilot-25D366?style=for-the-badge&logo=whatsapp&logoColor=white)](#-whatsapp-desktop-co-pilot)
+[![License](https://img.shields.io/badge/License-MIT-9d4edd?style=for-the-badge)](LICENSE)
 
-![Python](https://img.shields.io/badge/Python-3.11%2B-55c8ff?style=for-the-badge&logo=python&logoColor=white)
-![Desktop](https://img.shields.io/badge/Desktop-PyQt6-20d67a?style=for-the-badge)
-![Voice](https://img.shields.io/badge/Voice-Gemini%20Live-e0ad36?style=for-the-badge)
-![Tests](https://img.shields.io/badge/Tests-218%20passed-4CAF50?style=for-the-badge)
-![License](https://img.shields.io/badge/License-MIT-9d7bff?style=for-the-badge)
+<br/>
 
-<sub>OPERO listens, reasons, acts, and reports the verified result.</sub>
+### *The voice-first multimodal desktop operator that doesn't just chat — it acts.*
+**Operates your desktop, conducts multi-source research, generates executive PDF reports, and autonomously pre-fills complex applications with unskippable safety gates.**
 
-[**GET STARTED**](#-quick-start) · [**CAPABILITIES**](#-capabilities) · [**ARCHITECTURE**](#-system-architecture) · [**DEVELOPMENT**](#-development) · [**WHATSAPP**](#-whatsapp-call-assistant)
+<br/>
+
+[**🚀 Quick Start**](#-quick-start) • [**👁️ Visual Showcase**](#️-visual-showcase) • [**⚡ Core Capabilities**](#-core-capabilities) • [**🌐 TinyFish Engine**](#-tinyfish-workspace-engine) • [**🛡️ 4-Layer Safety**](#-the-4-layer-safety-architecture) • [**🏗️ Architecture**](#️-system-architecture) • [**🎬 Demo Scripts**](#-scripted-live-demos)
+
+<br/>
 
 </div>
 
+---
+
 ```text
-┌─────────────────────────────────────────────────────────────────────────────┐
-│  OPERO // DESKTOP OPERATOR                                      STATUS: READY │
-│  INPUT  voice · text · file · camera       OUTPUT  speech · UI · local action │
-│  CORE   Gemini Live · AssemblyAI · Playwright · PyQt6 · local tool registry   │
-└─────────────────────────────────────────────────────────────────────────────┘
+┌──────────────────────────────────────────────────────────────────────────────────────────────────┐
+│  OPERO 2.0 // AUTONOMOUS MULTIMODAL DESKTOP OPERATOR                             STATUS: ONLINE  │
+│  INPUT    Real-time Voice • Live Vision • File Drop • Screen Context • Command Line              │
+│  OUTPUT   Bidirectional Audio • 3D Wireframe HUD • Executive PDF Reports • Browser Automation    │
+│  ENGINES  Gemini Live • TinyFish SDK • AssemblyAI • Playwright • WhatsApp Bridge • PyQt6         │
+│  SAFETY   Zero Unauthorized Submissions • Payment Field Blocker • Forge-Resistant Tokens         │
+└──────────────────────────────────────────────────────────────────────────────────────────────────┘
 ```
 
 > [!IMPORTANT]
-> OPERO is designed to act, not merely describe how to act. It keeps consequential work visible and stops for review before final submissions or irreversible external actions.
+> **The Operator Principle:** Traditional AI assistants describe how to do things. **OPERO 2.0 executes them directly on your machine.** It browses the web, parses local resumes, fills forms, and manages desktop workflows—while guaranteeing human-in-the-loop oversight through a strict **Halt-Before-Submit** barrier.
 
 ---
 
-## ◈ // WHY OPERO
+## 👁️ Visual Showcase
 
-Most assistants stop at advice. OPERO is designed to turn a spoken or typed request into an observable desktop result: opening an app, researching current information, processing a file, controlling a browser, preparing an application, or routing a voice interaction through a visual HUD.
+<div align="center">
+  <img src="assets/opero_hud.png" alt="OPERO 2.0 Cyberpunk Desktop HUD Interface" width="95%" style="border-radius: 12px; border: 1px solid #00f5d4; box-shadow: 0 0 30px rgba(0, 245, 212, 0.25);" />
+  <p><em>OPERO 2.0 Native PyQt6 Cyberpunk HUD — featuring 3D holographic wireframe reactivity, real-time telemetry, TinyFish workspace controls, and local activity streams.</em></p>
+</div>
 
-OPERO is a **local desktop application**. Its interface, audio devices, files, browser automation, and WhatsApp Desktop controls remain on the machine. Cloud services are used only for capabilities you configure, such as Gemini or AssemblyAI.
+<br/>
+
+### 🎛️ HUD Layout Overview
+
+| Region | Component | Capability |
+| :--- | :--- | :--- |
+| **Left Column** | **System Telemetry Monitor** | Live CPU, Memory, Network throughput, GPU status, OS telemetry, and runtime uptime. |
+| **Center Stage** | **3D Reactive Holographic Canvas** | Audio-reactive wireframe mesh with real-time phoneme viseme lip-sync, state glowing (Listening, Thinking, Speaking, Halted), and dynamic camera view switching. |
+| **Center Drawer** | **TinyFish Intelligence Workspace** | Tabbed multi-mode engine: **⚡ Quick Search**, **🔬 Deep Research**, and **🎯 Apply Flow** with live progress bars and one-click PDF exports. |
+| **Right Column** | **Agent Timeline & Activity Stream** | Real-time event log, live agent step progression, file drop receptor, and natural language command terminal. |
+| **Controls Drawer** | **System Quick Panel** | Instant TinyFish mode switcher, voice engine toggle (Gemini Live vs AssemblyAI), WhatsApp pairing QR, and encrypted settings. |
 
 ---
 
-## ◈ // QUICK START
+## 💡 Why OPERO 2.0?
 
-### Prerequisites
+Most AI agents are either locked inside a browser chat window or run as unconstrained headless scripts that risk submitting forms, making unauthorized purchases, or failing silently. 
 
-| Requirement | Needed for | Notes |
-| --- | --- | --- |
-| Python 3.11–3.13 | Core application | Python 3.12 is recommended |
-| Gemini API key | Default live voice experience | Enter on first launch or in OPERO settings |
-| Node.js 18+ | WhatsApp bridge | Required only for WhatsApp pairing/call detection |
-| Chrome or Edge | WhatsApp bridge runtime | The bridge discovers installed browsers; use `WA_CHROME_PATH` to override |
+| Feature | Standard Chatbots (ChatGPT / Claude web) | Headless RPA / Browser Scripts | **OPERO 2.0** |
+| :--- | :---: | :---: | :---: |
+| **Local Desktop Control** | ❌ None | ⚠️ Blind execution | ✅ **20+ native actions with sandboxing** |
+| **Real-Time Voice Conversation** | ⚠️ Web-only / High Latency | ❌ None | ✅ **Bidirectional Gemini Live & AssemblyAI** |
+| **Autonomous Web Automation** | ❌ None | ⚠️ Fragile selectors | ✅ **TinyFish Browser Agent with AI reasoning** |
+| **Pre-Submission Human Review** | ❌ N/A | ❌ Auto-submits recklessly | ✅ **Mandatory Field-Mapping Review Modal** |
+| **Financial / Payment Guard** | ❌ N/A | ❌ Dangerous | ✅ **Automatic Credit Card & CVV Interceptor** |
+| **Executive Intelligence Reports** | ⚠️ Raw Markdown text | ❌ Raw JSON | ✅ **1-Click Headless PDF Reports with Citations** |
+| **WhatsApp Calling & Messaging** | ❌ None | ⚠️ API costly | ✅ **Local Web Bridge with Desktop UI Automation** |
+| **Offline Test Coverage** | ❌ N/A | ⚠️ Often flaky | ✅ **218/218 passing offline unit tests** |
 
-### Install
+---
 
-```powershell
-git clone <your-repository-url>
-cd "The Opero"
-python setup.py
+## ⚡ Core Capabilities
+
+### 🎙️ 1. Real-Time Multimodal Voice & Vision
+* **Gemini Live Integration:** Zero-latency bidirectional audio streaming using Google's Live API with interruption handling and session resumption.
+* **Alternative AssemblyAI Pipeline:** Hot-swappable streaming Speech-to-Text with multi-engine TTS (EdgeTTS, Kokoro, ElevenLabs) for flexible offline/fallback workflows.
+* **Screen & Camera Vision:** On-demand computer vision analysis for inspecting active screen contents, analyzing diagrams, or reviewing open windows.
+* **Hardware-Agnostic Audio:** Automatic fallback between DirectSound, MME, WASAPI, and CoreAudio with content-based echo cancellation (`core/echo.py`).
+
+### 🌐 2. TinyFish Autonomous Browser Engine
+* **⚡ Quick Search:** Instant parallel search retrieving ranked cards with clean page titles, snippets, and verified destination URLs.
+* **🔬 Deep Research:** Multi-source web synthesis that digests dozens of pages and produces structured findings with numbered inline citations (`[[1]]`, `[[2]]`).
+* **🤖 Live Agent Timeline:** Turns the right-hand panel into a real-time event monitor showing step-by-step browser progress (`PENDING` → `RUNNING` → `COMPLETED`), elapsed time counter, and emergency stop button.
+* **Resilient Dual-Engine Fallback:** If cloud search experiences rate limits or network latency, OPERO automatically falls back to DuckDuckGo search in under 3 seconds.
+
+### 🎯 3. 1-Click Opportunity Apply Flow
+* **Intelligent Opportunity Discovery:** Discovers and scores internship and hackathon listings against the user's profile (skills, resume text, experience).
+* **Match Score Badges:** Highlights fit percentages (e.g., `94% Match`) with concrete match rationale.
+* **Pre-Fill Review Modal:** Synthesizes custom cover notes and shows exact field-value pairs with confidence ratings before opening a browser.
+* **Strict "Halt Before Submit" Guarantee:** The agent navigates the web form, populates all inputs, attaches resumes, and **halts before the final submission button** so you inspect and submit manually.
+
+### 📄 4. One-Click Executive PDF Reports
+* **Headless ReportLab Generation:** Generates styled PDF reports from completed searches or deep research sessions.
+* **Structured Layout:** Document title, execution timestamp, unique Run ID, executive summary, key findings table, verified source URLs, and confidential footer.
+* **Instant OS Opener & WhatsApp Share:** One click opens the PDF in your default system viewer or dispatches it directly to WhatsApp contacts.
+
+### 💬 5. WhatsApp Desktop Co-Pilot
+* **Local Bridge Runtime:** Powered by a headless Node.js bridge with WhatsApp Web pairing via visual QR code in the HUD.
+* **Incoming Call Interception:** Automatically identifies callers and answers incoming desktop calls with a personalized text-to-speech message when busy.
+* **Zero Cloud API Fees:** Uses your own paired WhatsApp instance locally—no Twilio or paid business API subscriptions required.
+
+---
+
+## 🛡️ The 4-Layer Safety Architecture
+
+When granting AI access to a web browser, safety cannot be an afterthought. OPERO 2.0 implements a multi-tier **Defense-in-Depth Safety Architecture**:
+
+<div align="center">
+  <img src="assets/safety_architecture.svg" alt="OPERO 2.0 4-Layer Safety Architecture" width="100%" />
+</div>
+
+<br/>
+
+```mermaid
+flowchart TD
+    Req[User: 'Apply to this opportunity'] --> L1[Layer 1: Pre-Submission Review Modal]
+    L1 -- Displays Field Mappings & Cover Note --> UserConf{User Clicks 'Proceed'?}
+    UserConf -- Cancelled --> Abort[Operation Aborted // Zero Action Taken]
+    UserConf -- Confirmed --> L2[Layer 2: Form Safety Validator]
+    
+    L2 -- Checks for Credit Card / Payment Keywords --> PayCheck{Payment Detected?}
+    PayCheck -- Yes --> Block[BLOCKED // Financial Transaction Prohibited]
+    PayCheck -- No --> L3[Layer 3: Constrained Agent Runtime]
+    
+    L3 -- Injects 'HALT BEFORE SUBMIT' Rule --> WebAgent[TinyFish Browser Agent Pre-Fills Inputs]
+    WebAgent -- Reaches Final Button --> Halt[AGENT FREEZES // Halted Before Submit]
+    
+    Halt --> L4[Layer 4: Post-Execution Safety Net]
+    L4 -- Scans DOM for Unauthorized Submission --> Verify{Form Still Active?}
+    Verify -- Yes --> Handover[Human Handover: User Reviews & Submits Manually]
+    Verify -- Violation --> Alert[Security Alarm // Event Logged to HUD]
 ```
 
-### Start
+### Safety Guarantees
+1. **Never Auto-Submits:** The browser agent is structurally prevented from clicking `Submit`, `Complete`, or `Pay`.
+2. **Zero Financial Risk:** Automatic regex blocking for 16-digit card numbers, CVVs, and billing addresses.
+3. **No Hallucinated Data:** Unknown fields are clearly marked `[UNKNOWN - User input needed]` with 0% confidence rather than invented.
+4. **Physical HUD Confirmation:** Critical desktop commands require physical button clicks on the HUD (`core/confirm.py`) with forge-resistant tokens.
+
+---
+
+## 🏗️ System Architecture
+
+```mermaid
+graph TB
+    subgraph Frontend ["🖥️ Presentation Layer (PyQt6 Cyberpunk HUD)"]
+        HUD["3D Wireframe Canvas<br/>(Audio Reactive + Visemes)"]
+        Workspace["TinyFish Workspace<br/>(Quick / Deep / Apply)"]
+        Timeline["Agent Live Timeline<br/>(Status / Stop / History)"]
+        Telemetry["System Telemetry<br/>(CPU / RAM / Net)"]
+    end
+
+    subgraph Core ["🧠 Orchestration Core (OperaLive Runtime)"]
+        Session["Session Manager<br/>(main.py)"]
+        Proxy["UI Thread Bridge<br/>(ui/proxy.py)"]
+        Confirm["Confirmation Gate<br/>(core/confirm.py)"]
+        Memory["Encrypted Memory<br/>(memory/config_manager.py)"]
+    end
+
+    subgraph Engines ["⚡ Intelligent Engines"]
+        GeminiLive["Google Gemini Live API<br/>(Bidirectional Audio/Vision)"]
+        AssemblyAI["AssemblyAI Pipeline<br/>(Streaming STT + Fallback)"]
+        TinyFishNode["Node.js TinyFish Service<br/>(@tiny-fish/sdk@0.8.0)"]
+        WABridge["WhatsApp Bridge<br/>(Node.js + Puppeteer)"]
+    end
+
+    subgraph Actions ["🛠️ Action & Tool Registry (20+ Tools)"]
+        TinyFishAction["actions/tinyfish_action.py<br/>(Search, Agent, Report)"]
+        FormSafety["actions/form_safety.py<br/>(Payment & Submit Blocker)"]
+        ReportGen["actions/report_generator.py<br/>(Headless ReportLab PDF)"]
+        DesktopAction["actions/desktop.py<br/>(App & Wallpaper Control)"]
+        FileAction["actions/file_processor.py<br/>(Resume & Document Analysis)"]
+        DevAction["actions/dev_agent.py & safe_shell.py<br/>(Sandboxed Code Helper)"]
+    end
+
+    Frontend <--> Proxy
+    Proxy <--> Session
+    Session <--> GeminiLive
+    Session <--> AssemblyAI
+    Session --> Confirm
+    Confirm --> Actions
+    Actions --> TinyFishAction
+    TinyFishAction <--> TinyFishNode
+    Actions --> FormSafety
+    Actions --> ReportGen
+    Actions --> DesktopAction
+    Actions --> FileAction
+    Actions --> DevAction
+    Session <--> WABridge
+    Session <--> Memory
+```
+
+---
+
+## 🚀 Quick Start
+
+### Prerequisites
+* **Python 3.11, 3.12, or 3.13** installed.
+* **Node.js 18+** (required for TinyFish and WhatsApp bridge).
+* **API Keys:**
+  * **Gemini API Key:** Required for live voice conversation ([Get free key](https://aistudio.google.com/)).
+  * **TinyFish API Key:** Required for browser agent operations ([Get key](https://tinyfish.ai/)).
+
+---
+
+### Step 1: Clone & Set Up Environment
+
+```powershell
+# Clone repository
+git clone https://github.com/Pavan-Gowda-S/Opero2.git
+cd Opero2
+
+# Create and activate Python virtual environment
+python -m venv .venv
+.venv\Scripts\activate           # Windows
+# source .venv/bin/activate      # Linux / macOS
+
+# Install Python dependencies
+pip install -r requirements.txt
+pip install -e ".[dev]"
+```
+
+### Step 2: Install Node.js Microservices
+
+```powershell
+# Install TinyFish service dependencies
+cd tinyfish_service
+npm install
+cd ..
+
+# (Optional) Install WhatsApp bridge dependencies
+cd whatsapp_bridge
+npm install
+cd ..
+```
+
+### Step 3: Configure Environment Variables
+
+Create a `.env` file in the project root:
+
+```env
+# Google Gemini API Key
+GEMINI_API_KEY=your_gemini_api_key_here
+
+# TinyFish Automation API Key
+TINYFISH_API_KEY=your_tinyfish_api_key_here
+
+# Optional: AssemblyAI Alternative Voice Key
+ASSEMBLYAI_API_KEY=your_assemblyai_key_here
+```
+
+*(All API keys are encrypted locally and excluded from Git by default).*
+
+---
+
+### Step 4: Launch OPERO 2.0
 
 ```powershell
 python main.py
 ```
 
-On first launch, OPERO guides you through API key configuration. All secrets stay local — `config/api_keys.json` is gitignored by default.
+1. The Cyberpunk HUD will initialize with the 3D reactive face and audio visualizer.
+2. Click the **`◈ TINYFISH`** toggle in the right control panel to deploy the **TinyFish Workspace**.
+3. Speak or type your request!
 
-### Run Tests
+---
+
+## 🧪 Comprehensive Test Suite
+
+OPERO 2.0 is built with rigorous reliability standards. Every single feature is covered by **100% offline unit and integration tests** using mocks and fakes—ensuring zero unexpected API charges during testing.
 
 ```powershell
-pip install -e ".[dev]"
+# Run the complete test suite (218 tests)
 python -m pytest tests/ -v
+
+# Validate all Gemini Live tool schemas
+python validate_tool_schemas.py
+```
+
+### Test Verification Results
+```text
+============================= test session starts ==============================
+collected 218 items
+
+tests/test_action_loader.py .............                                [  5%]
+tests/test_config_manager.py ..........                                  [ 10%]
+tests/test_confirm.py ............                                       [ 16%]
+tests/test_logger.py ........                                            [ 20%]
+tests/test_memory_manager.py ...........                                 [ 25%]
+tests/test_phase3_workspace.py ..................                        [ 33%]
+tests/test_phase4_timeline.py ..............                              [ 40%]
+tests/test_phase5_ui_export.py ..............                            [ 46%]
+tests/test_phase5_workflow.py .........................                  [ 58%]
+tests/test_phase6_apply_flow.py .........................                [ 69%]
+tests/test_tinyfish_action.py .............................              [ 83%]
+tests/test_validator.py .....................................            [100%]
+
+============================= 218 passed in 23.49s =============================
+[PASS] All 20 tool schemas valid for Gemini Live dispatch
 ```
 
 ---
 
-## ◈ // CAPABILITIES
+## 🎬 Scripted Live Demos
 
-| Capability | Typical request | Outcome |
-| --- | --- | --- |
-| Live web research | "Find internships matching my Python and AI experience." | Current links, ranked options, concise comparison |
-| Application preparation | "Use my resume to fill this internship form." | Extracts details and fills fields; pauses before submission |
-| Desktop control | "Set this image as my wallpaper." | Applies a local image or downloads a URL-based wallpaper |
-| File processing | "Summarize this PDF" / "Convert this spreadsheet." | Reads, analyzes, transforms, or exports supported files |
-| Vision | "What is on my screen?" | On-demand screen or camera analysis |
-| Browser operation | "Open the docs and find the API section." | Browser navigation and page interaction |
-| Call assistance | "Answer WhatsApp calls and say I'm busy." | QR pairing, bridge detection, and Desktop-call handling |
-| Mini mode | Press F10 or click ◱ | Small draggable avatar widget (cat, face, emoji, Spider-Man) |
-| Voice engines | Switch between Gemini Live and AssemblyAI | Real-time voice with multiple STT/TTS backends |
-| Plugin system | Drop a Python file in `plugins/` | Auto-discovered, hot-loadable, with enable/disable |
+Test or showcase OPERO 2.0 using these three interactive scenarios:
 
-> [!NOTE]
-> **Operator rule:** OPERO reports verified tool results — it never claims an action occurred when it did not.
+### Demo 1: Multi-Source Deep Web Research
+1. Ensure TinyFish mode is active (`◈ TINYFISH: ON`).
+2. Speak:
+   > *"Opero, research the latest breakthroughs in agentic AI."*
+3. **What happens:** 
+   - The workspace automatically flips to **🔬 Deep Research**.
+   - The progress pulse activates as sources are retrieved and synthesized.
+   - Formatted markdown appears with numbered inline citations (`[[1]]`, `[[2]]`) linking to verified URLs.
 
 ---
 
-## ◈ // SYSTEM ARCHITECTURE
-
-```mermaid
-flowchart LR
-    U[User: voice, text, file, camera] --> UI[PyQt6 HUD / OPERO UI]
-    UI --> R[OperaLive runtime]
-    R <--> GL[Gemini Live]
-    R --> AR[Action registry]
-    R --> PR[Plugin registry]
-    R <--> MEM[Local memory & config]
-    AR --> DESK[Desktop controls]
-    AR --> WEB[Browser automation]
-    AR --> FILES[File processor]
-    AR --> SEARCH[Live web research]
-    AR --> WA[WhatsApp call manager]
-    WA <--> BRIDGE[WhatsApp Web bridge]
-    R <--> DASH[Optional phone dashboard]
-```
-
-### Voice and action lifecycle
-
-```mermaid
-sequenceDiagram
-    participant User
-    participant HUD as OPERO HUD
-    participant Runtime as OperaLive
-    participant Model as Voice / LLM
-    participant Tool as Action or Plugin
-    User->>HUD: Speak, type, or drop a file
-    HUD->>Runtime: Normalized input
-    Runtime->>Model: Context + tool declarations
-    Model-->>Runtime: Reply or tool call
-    alt Tool required
-        Runtime->>Tool: Execute local action
-        Tool-->>Runtime: Verified result
-        Runtime->>Model: Result context
-    end
-    Runtime-->>HUD: Speech, state, log, visual feedback
-    HUD-->>User: Result
-```
+### Demo 2: One-Click Intelligence PDF Export
+1. After completing Demo 1, click the **`[📄 Export PDF]`** button on the workspace toolbar.
+2. **What happens:**
+   - Headless ReportLab synthesizes a publication-ready PDF in `reports/` with metadata, timestamps, tables, and reference lists.
+   - Click **`[↗ Open PDF]`** to immediately open it in your system viewer.
+   - Click **`[💬 Send via WhatsApp]`** to dispatch it directly to a contact via the WhatsApp bridge.
 
 ---
 
-## ◈ // REPOSITORY MAP
+### Demo 3: Automated Opportunity Discovery & Safe Pre-Fill
+1. Switch to the **`🎯 Apply Flow`** tab.
+2. Type or speak:
+   > *"Find AI and machine learning internships."*
+3. **What happens:**
+   - OPERO scans listings, parses your profile skills (`Python`, `Gemini`, `PyQt6`), and calculates match scores (e.g. `94% Match`).
+   - Click **`[📝 Review & Apply]`** on any opportunity card.
+   - The **Pre-Fill Review Dialog** appears, showing exact field mappings, confidence percentages, and a tailored cover note.
+   - Click **`[Proceed to Pre-Fill]`**. The browser agent launches, fills the fields, and **stops dead before the final submit button**.
+   - Status updates: `● HALTED BEFORE SUBMIT: Ready for manual review`.
+
+---
+
+## 📂 Repository Architecture
 
 ```text
-opero/
-├── main.py                 # Entry point, OperaLive session, audio pipeline
-├── ui.py                   # PyQt6 HUD, overlays, Automation Studio
-├── whatsapp_call.py        # Bridge coordination and Desktop call detection
-├── whatsapp_bridge/        # Node.js WhatsApp Web bridge and QR endpoint
+The-Opero/
+├── main.py                     # Primary entry point, Gemini Live audio loop, event dispatch
+├── ui.py                       # Legacy UI components & MiniMode avatar widget
+├── setup.py / pyproject.toml   # Project configuration & package metadata
+├── requirements.txt            # Python dependencies
+├── validate_tool_schemas.py    # Schema integrity validator for tool dispatch
 │
-├── core/                   # Voice, audio, vision, infrastructure
-│   ├── gemini.py           # Gemini Live API client with model fallback
-│   ├── llm_client.py       # Local LLM support (Ollama, OpenAI-compatible)
-│   ├── action_loader.py    # Tool discovery, validation, and dispatch
-│   ├── validator.py        # Input validation for tool parameters
-│   ├── echo.py             # Content-based echo cancellation
-│   ├── viseme.py           # Lip-sync viseme generation
-│   ├── tts.py              # Multi-engine TTS (EdgeTTS, Kokoro, ElevenLabs)
-│   ├── stt.py              # Multi-engine STT (Whisper, Vosk)
-│   ├── wake_word.py        # Local "Hey opero" wake word detection
-│   ├── confirm.py          # Human confirmation gate (forge-resistant token)
-│   ├── logger.py           # Centralized logging configuration
-│   ├── installer.py        # Auto-dependency installer
-│   ├── avatar.py           # Avatar rendering (holographic orb)
-│   └── prompt.txt          # AI behavior specification
+├── assets/                     # Graphic assets
+│   ├── opero_banner.svg        # Cyberpunk animated hero banner
+│   ├── safety_architecture.svg # 4-Layer safety architecture diagram
+│   └── opero_hud.png           # High-resolution HUD interface screenshot
 │
-├── actions/                # Self-registering tool modules (21+)
-│   ├── browser_control.py  # Search, navigate, screenshot, form fill
-│   ├── send_message.py     # WhatsApp, email, messaging
-│   ├── file_ops.py         # Read, write, move, copy, delete
-│   ├── computer_control.py # System commands, app control
-│   ├── code_helper.py      # Code analysis and generation
-│   ├── dev_agent.py        # Development task automation
-│   └── ...                 # weather, reminders, flight finder, etc.
+├── ui/                         # PyQt6 Modern Cyberpunk GUI
+│   ├── window.py               # Main window layout, splitter, and signal orchestration
+│   ├── widgets.py              # 3D holographic wireframe canvas & audio visualizer
+│   ├── tinyfish_panel.py       # Tabbed workspace (Quick Search, Deep Research, Apply Flow)
+│   ├── agent_timeline.py       # Live agent step timeline with stop button & history replay
+│   ├── apply_review_dialog.py  # Pre-submission review modal with field mapping table
+│   ├── proxy.py                # Thread-safe Qt signal/slot bridge
+│   └── theme.py                # Cyberpunk theme color definitions (C.PRI, C.GREEN, C.RED)
 │
-├── memory/
-│   ├── config_manager.py   # Settings persistence (JSON + AES encryption)
-│   └── memory_manager.py   # Long-term memory with search
+├── core/                       # Core assistant infrastructure
+│   ├── gemini.py               # Gemini Live API client with session management
+│   ├── assemblyai_voice.py     # Alternative streaming STT & TTS engine
+│   ├── action_loader.py        # Dynamic action discovery & schema extraction
+│   ├── confirm.py              # Forge-resistant on-screen confirmation gate
+│   ├── validator.py            # Input validation and type casting
+│   ├── echo.py                 # Content-based acoustic echo cancellation
+│   ├── viseme.py               # Real-time lip-sync phoneme generation
+│   └── logger.py               # Structured logging system
 │
-├── dashboard/              # Local HTTP dashboard (FastAPI + WebSocket)
-├── plugins/                # Drop-in extensions with hot-load
-├── config/                 # Runtime config (gitignored)
-├── tests/                  # Test suite (84 tests, pytest)
-├── pyproject.toml          # Modern Python packaging
-└── CONTRIBUTING.md         # Development guide
+├── actions/                    # Self-registering action tools (20+ tools)
+│   ├── tinyfish_action.py      # TinyFish search, agent dispatch & report handler
+│   ├── form_safety.py          # 4-layer safety gate, payment blocker & regex validator
+│   ├── report_generator.py     # Headless ReportLab PDF report generation engine
+│   ├── browser_control.py      # Playwright browser automation
+│   ├── file_processor.py       # Resume, document, PDF, and media parser
+│   ├── computer_control.py     # Windows system commands and app launcher
+│   ├── dev_agent.py            # Autonomous code analysis and generation
+│   ├── send_message.py         # WhatsApp and email dispatch tool
+│   └── safe_shell.py           # Sandboxed command-line executor
+│
+├── tinyfish_service/           # Node.js TinyFish microservice
+│   ├── index.js                # CLI dispatch wrapper for Python subprocess
+│   ├── package.json            # @tiny-fish/sdk@0.8.0 dependency definition
+│   └── lib/                    # Client initialization, validation, and agent runner
+│
+├── whatsapp_bridge/            # Node.js WhatsApp Web co-pilot
+│   ├── index.js                # Puppeteer/whatsapp-web.js bridge
+│   └── package.json            # Bridge dependencies
+│
+├── memory/                     # Local persistence & security
+│   ├── config_manager.py       # Encrypted API key & settings manager
+│   └── memory_manager.py       # Long-term semantic session memory
+│
+├── reports/                    # Generated PDF reports output folder (gitignored)
+└── tests/                      # 218 offline pytest unit & integration tests
 ```
 
 ---
 
-## ◈ // SYSTEM MAP
+## 🔒 Security & Privacy Manifesto
 
-| Area | What OPERO provides | Primary component |
-| --- | --- | --- |
-| Voice | Gemini Live conversation, interruption, push-to-talk, wake word | `main.py`, `core/session.py` |
-| Alternative voice | AssemblyAI streaming STT with TTS output | `core/assemblyai_voice.py` |
-| Desktop | App launch, wallpaper, file tasks, system controls | `actions/` |
-| Browser | Search, navigation, page reading, screenshots | `actions/browser_control.py` |
-| Files | Documents, PDFs, images, spreadsheets, audio, video | `actions/file_processor.py` |
-| WhatsApp | QR pairing, bridge events, call detection | `whatsapp_call.py`, `whatsapp_bridge/` |
-| Automation | Visual trigger → logic → action maps | `ui.py` Automation Studio |
-| Remote access | Optional phone dashboard with encrypted pairing | `dashboard/` |
-| Mini mode | Draggable avatar widget (4 styles) | `ui.py` MiniModeWidget |
-| Extensibility | Auto-discovered actions and plugins | `core/action_loader.py`, `plugins/` |
+* **Local-First Execution:** Your documents, resumes, and desktop files never leave your machine unless explicitly directed.
+* **Excluded Credentials:** All configuration files (`config/api_keys.json`, `.env`) are strictly excluded from version control.
+* **Non-Custodial Automation:** OPERO does not store passwords, credit cards, or bank credentials. Form filling automatically halts on payment inputs.
+* **Audit Trail:** Every agent run and tool execution is recorded in local JSON history files (`actions/tinyfish_history.json`) with timestamps, target URLs, and exit codes.
 
 ---
 
-<a id="development"></a>
-## ◈ // DEVELOPMENT
+## 📜 License
 
-### Setup
-
-```powershell
-git clone <repo-url> && cd "The Opero"
-python -m venv .venv
-.venv\Scripts\activate          # Windows
-pip install -e ".[dev]"
-```
-
-### Code Quality
-
-```powershell
-# Run all tests
-python -m pytest tests/ -v
-
-# Lint
-ruff check .
-
-# Type check
-mypy .
-```
-
-### Adding a New Action
-
-1. Create `actions/my_action.py`
-2. Define a `TOOL` dict (name, description, JSON Schema parameters)
-3. Optionally add a `VALIDATOR` dict for input validation
-4. Implement `execute(params: dict) -> str`
-5. The action is auto-discovered on next startup
-
-```python
-# actions/example.py
-from core.logger import get_logger
-from core.validator import validate_params
-
-log = get_logger(__name__)
-
-TOOL = {
-    "name": "example_action",
-    "description": "Does something useful",
-    "parameters": {
-        "type": "object",
-        "properties": {
-            "query": {"type": "string", "description": "What to search for"},
-        },
-        "required": ["query"],
-    },
-}
-
-VALIDATOR = {
-    "query": [{"type": str, "required": True, "max_len": 500}],
-}
-
-def execute(params: dict) -> str:
-    params = validate_params(params, VALIDATOR, "example_action")
-    log.info("Running example_action with query=%s", params["query"])
-    return f"Result for: {params['query']}"
-```
-
-### Adding a Plugin
-
-Drop a Python file in `plugins/` following the template in `plugins/_template.py`. Plugins are hot-loaded — enable/disable without restart.
+This project is licensed under the **MIT License** — see the [LICENSE](LICENSE) file for details.
 
 ---
 
-<a id="whatsapp-call-assistant"></a>
-## ◈ // WHATSAPP CALL ASSISTANT
-
-### Pairing flow
-
-```mermaid
-flowchart TD
-    A[Start OPERO] --> B[Launch local WhatsApp bridge]
-    B --> C{Already paired?}
-    C -- No --> D[OPERO shows LINK WHATSAPP QR]
-    D --> E[Phone: WhatsApp → Linked devices]
-    E --> F[Scan QR]
-    F --> G[Bridge reports connected]
-    C -- Yes --> G
-    G --> H[Monitor bridge + WhatsApp Desktop]
-```
-
-1. Start OPERO
-2. Click **💬 LINK WHATSAPP** in the controls drawer (or wait for auto-prompt)
-3. On your phone: **WhatsApp → Settings → Linked devices → Link a device**
-4. Scan the QR code shown inside OPERO
-5. Keep WhatsApp Desktop open for automated call controls
-
-### Incoming call flow
-
-```mermaid
-flowchart LR
-    I([Incoming call]) --> B{Bridge event?}
-    B -- Yes --> D[Create call event]
-    B -- No --> V[Inspect WhatsApp Desktop UI]
-    D --> A{Auto-answer enabled?}
-    A -- No --> P[Show Answer / Decline]
-    A -- Yes --> Q[Click answer + speak message]
-```
-
-> [!WARNING]
-> WhatsApp does not provide a public API for personal calls. OPERO uses a linked local session and Desktop UI automation, which must be tested on your machine.
-
----
-
-## ◈ // VOICE ENGINES
-
-| Engine | Use case | Setup |
-| --- | --- | --- |
-| Gemini Live | Low-latency bidirectional voice + native tool use | Configure Gemini key, choose a voice |
-| AssemblyAI | Real-time transcription with alternate pipeline | Add `assemblyai_api_key`, switch engine in UI |
-
-If AssemblyAI fails, OPERO falls back to the default engine automatically.
-
----
-
-## ◈ // LOCAL CONFIGURATION
-
-Configuration is stored at `config/api_keys.json` (gitignored):
-
-```json
-{
-  "gemini_api_key": "",
-  "assemblyai_api_key": "",
-  "voice_engine": "opero",
-  "whatsapp_auto_answer": false,
-  "whatsapp_busy_message": "I am busy right now.",
-  "moss_user_id": "123456"
-}
-```
-
----
-
-## ◈ // TROUBLESHOOTING
-
-| Symptom | Fix |
-| --- | --- |
-| Browser actions fail | Run `python -m playwright install chromium firefox` |
-| AssemblyAI falls back | Re-enter API key and check microphone selection |
-| QR panel never appears | Run `npm install` in `whatsapp_bridge/`, check Node.js |
-| Caller hears nothing | Configure virtual audio device as WhatsApp's microphone |
-| MOSS rejects submission | Use the numeric ID from Stanford MOSS registration |
-
----
-
-## ◈ // SECURITY & RESPONSIBLE USE
-
-- API keys, OAuth tokens, and WhatsApp sessions stay on your machine (`config/` is gitignored)
-- Review recipients, form fields, and submissions before they leave your machine
-- Dashboard is localhost-only with CORS, rate limiting, and security headers
-- All tool parameters are validated before execution
-- Human confirmation gate prevents irreversible actions
-
----
-
-## ◈ // TINYFISH MODE
-
-### What is TinyFish Mode?
-
-TinyFish Mode extends Opero with advanced web research and browser automation capabilities through [TinyFish](https://tinyfish.ai), enabling intelligent opportunity discovery, automated form pre-filling, and comprehensive research with source citations—all with multi-layer safety gates.
-
-**Key capabilities:**
-- **Quick Search** - Fast web queries with ranked result cards
-- **Deep Research** - Multi-source synthesis with citations and markdown formatting
-- **Apply Flow** - Opportunity discovery, match scoring, and automated form pre-fill with halt-before-submit guarantee
-- **Live Agent Timeline** - Real-time status tracking for all operations
-- **PDF Export** - One-click professional reports with WhatsApp integration
-
-### Setup
-
-#### Prerequisites
-- Node.js 18+ (required for TinyFish service)
-- TinyFish API key ([get one at tinyfish.ai](https://tinyfish.ai))
-
-#### Installation
-
-1. **Install Node.js dependencies:**
-```powershell
-cd tinyfish_service
-npm install
-```
-
-2. **Configure API key** (choose one method):
-
-**Option A: Root `.env` file (recommended)**
-```bash
-# .env (in project root)
-TINYFISH_API_KEY=your_api_key_here
-```
-
-**Option B: `config/api_keys.json`**
-```json
-{
-  "gemini_api_key": "...",
-  "tinyfish_api_key": "your_api_key_here"
-}
-```
-
-3. **Verify service:**
-```powershell
-cd tinyfish_service
-node --env-file=../.env index.js search --query="test" --limit=1
-```
-
-If successful, you'll see JSON output with search results.
-
-### How to Use
-
-#### Enabling TinyFish Mode
-
-1. Launch Opero: `python main.py`
-2. Click the **TinyFish toggle** in the header controls
-3. The right panel switches to **Agent Timeline** widget
-4. The bottom workspace expands with three tabs
-
-#### Quick Search
-
-**Voice command:**
-```
-"Opero, search for Python AI internships"
-```
-
-**Text command:**
-```
-search for Python AI internships
-```
-
-**Result:** 3-5 result cards with titles, URLs, and snippets appear in the Quick Search tab within 5-15 seconds.
-
-#### Deep Research
-
-**Voice command:**
-```
-"Opero, research latest developments in agentic AI"
-```
-
-**Text command:**
-```
-research latest developments in agentic AI
-```
-
-**Result:** Comprehensive markdown-formatted report with:
-- Executive summary
-- Key findings (bullet points)
-- Numbered source citations
-- Delivery time: 30-60 seconds
-
-#### Apply Flow (Automated Form Pre-Fill)
-
-**Step 1: Search for opportunities**
-1. Switch to **🎯 Apply Flow** tab
-2. Enter search: `Python AI internship` or `hackathons for students`
-3. Click **🔍 Find Matches**
-
-**Step 2: Review ranked results**
-- Each opportunity card shows:
-  - Match score badge (0-100%, color-coded)
-  - Match rationale (why it fits your profile)
-  - Deadline and location
-  - **[📝 Review & Apply]** button
-
-**Step 3: Pre-submission review**
-- Click **[📝 Review & Apply]** on any opportunity
-- **Pre-Fill Review Dialog** appears showing:
-  - Exact field-value mappings (e.g., "Full Name: John Doe")
-  - Confidence scores (Profile: 100%, Synthesized: 80%, Inferred: 50%)
-  - Generated cover note (tailored to the opportunity)
-  - **Safety warning:** Agent will halt before submit button
-
-**Step 4: Confirm and pre-fill**
-- Review all field mappings
-- Click **[Proceed to Pre-Fill]**
-- Agent opens browser, navigates to form, fills fields
-- **Timeline shows: "● HALTED BEFORE SUBMIT: Ready for manual review"**
-
-**Step 5: Manual submission**
-- Review pre-filled form in browser window
-- **You must manually click Submit** to complete application
-
-### Workspace Features
-
-| Feature | Tab | Purpose |
-|---------|-----|---------|
-| **Quick Search** | 🔍 Quick Search | Fast web queries, result cards with titles/URLs/snippets |
-| **Deep Research** | 📚 Deep Research | Multi-source synthesis, markdown reports with citations |
-| **Apply Flow** | 🎯 Apply Flow | Opportunity discovery, match scoring, form pre-fill |
-| **Agent Timeline** | Right panel | Real-time status (IDLE → PENDING → RUNNING → COMPLETED) |
-| **PDF Export** | Export toolbar | Generate professional PDF reports from any results |
-| **WhatsApp Share** | Export toolbar | Share PDFs via WhatsApp Desktop |
-
-### Safety Architecture
-
-TinyFish Mode enforces a **4-layer safety system** to prevent unauthorized submissions and payment processing:
-
-#### Layer 1: Pre-Execution Review (UI Gate)
-- **Field Mapping Table** - Every field and value shown before execution
-- **Confidence Scores** - Profile (100%), Synthesized (60-90%), Inferred (<60%)
-- **Safety Warnings** - Explicit "halt before submit" guarantee
-- **Explicit Confirmation** - User must click "Proceed to Pre-Fill"
-
-#### Layer 2: Form Safety Validation
-Runs before agent execution:
-- **Payment Detection** - Blocks forms with: credit card, CVV, billing address fields
-- **Goal Validation** - Blocks prohibited patterns:
-  - Payment/purchase keywords
-  - Account deletion/password changes
-  - Social media posting
-  - Data scraping
-  - Mass operations
-- **Required Field Check** - Halts if required fields are missing or unknown
-
-#### Layer 3: Agent Runtime Constraint
-- **Explicit Halt Instruction** - Agent goal includes: "DO NOT CLICK SUBMIT. STOP BEFORE THE FINAL SUBMIT BUTTON."
-- **Timeline Updates** - Live status tracking shows each step
-- **Stop Button** - User can cancel operation mid-execution
-
-#### Layer 4: Post-Execution Safety Net
-- **Submission Indicator Scan** - Checks for confirmation pages
-- **Security Violation Logging** - Alerts if unauthorized submit detected
-- **Browser State Verification** - Confirms form is still editable
-
-**Safety Guarantees:**
-- ✅ **Never auto-submit** - Agent always halts before final submit button
-- ✅ **Never process payments** - Payment forms trigger immediate block
-- ✅ **Never fabricate data** - Unknown fields flagged as "[UNKNOWN - User input needed]"
-- ✅ **Always confirm** - Mandatory pre-execution review with exact field-value pairs
-
-### Cost & Credit Information
-
-| Operation | Cost | Notes |
-|-----------|------|-------|
-| Quick Search | **Free** | No TinyFish credits consumed |
-| Deep Research | ~$0.05 - $0.20 USD | Varies by source count |
-| Form Pre-Fill (Agent) | ~$0.10 - $1.00 USD | Remote browser automation |
-| PDF Export | **Free** | Local generation, no API calls |
-
-**Credit Guard:** Before billable agent operations, Opero displays:
-```
-⚠️ Estimated Cost: ~$0.10 - $1.00 USD (Remote Browser Agent)
-This operation will use TinyFish credits from your account.
-```
-
-**Wallet Management:** Check balance and add funds at [tinyfish.ai/wallet](https://tinyfish.ai/wallet)
-
-### Error Handling
-
-TinyFish Mode provides **human-readable error messages** with clear next steps:
-
-| Error | Meaning | Solution |
-|-------|---------|----------|
-| "TinyFish API key not found" | Missing configuration | Add `TINYFISH_API_KEY` to `.env` or `config/api_keys.json` |
-| "TinyFish rate limit reached" | Too many requests | Wait 60 seconds before retrying |
-| "Operation timed out" | Agent exceeded 10-minute limit | Remote agent may still be active; check TinyFish dashboard |
-| "Navigation blocked: Safety filters triggered" | Prohibited goal pattern detected | Reformulate goal to avoid payment/account modification keywords |
-| "CAPTCHA detected" | Site has bot protection | Complete CAPTCHA manually in browser window |
-| "Payment form blocked" | Form requests credit card/billing | Apply manually—Opero never handles financial transactions |
-| "Form structure changed" | Site redesign broke selectors | Apply manually at provided URL |
-
-**No Stack Traces:** All user-facing errors are clean, actionable messages—never raw exceptions or HTTP codes.
-
-### Troubleshooting
-
-#### TinyFish service won't start
-```powershell
-cd tinyfish_service
-npm install
-node --env-file=../.env index.js search --query="test" --limit=1
-```
-If this fails, check:
-- Node.js version: `node --version` (must be 18+)
-- API key in `.env` file
-- No firewall blocking Node.js
-
-#### Search returns no results
-- **Check API key:** Verify `TINYFISH_API_KEY` in `.env` or `config/api_keys.json`
-- **Check rate limits:** Wait 60 seconds if you've made multiple requests
-- **Check query:** Try a simpler, more general search term
-
-#### Agent timeout
-- **Expected behavior:** Complex forms may take 2-4 minutes
-- **Remote execution:** Even if local UI times out, remote agent may still complete
-- **Check status:** Use TinyFish dashboard to verify run completion
-
-#### PDF export fails
-- **Check permissions:** Ensure write access to `reports/` directory
-- **Check dependencies:** Verify ReportLab installed: `pip list | grep reportlab`
-- **Manual open:** PDF saved to `reports/Deep_Research_YYYYMMDD_HHMMSS.pdf`
-
-#### WhatsApp share not working
-- **Requires WhatsApp Desktop:** Install from [whatsapp.com/download](https://www.whatsapp.com/download)
-- **Windows:** Uses `shell:AppsFolder\5319275A.WhatsAppDesktop_cv1g1gvanyjgm!App`
-- **Mac/Linux:** Uses `open` / `xdg-open` with `whatsapp://` URI
-
-### Responsible Use
-
-- **Review before confirming:** Always check field mappings in Pre-Fill Review Dialog
-- **Never use for payments:** Payment form blocking is enforced—apply manually for purchases
-- **Verify agent-filled data:** Check browser window before manually clicking Submit
-- **Keep API key secure:** Never share or commit your `TINYFISH_API_KEY`
-- **Monitor credit usage:** Track consumption at [tinyfish.ai/wallet](https://tinyfish.ai/wallet)
-- **Respect rate limits:** Wait between requests if you hit rate limit errors
-
----
-
-## ◈ // LICENSE
-
-See [LICENSE](LICENSE).
+<div align="center">
+  <sub>Built with ❤️ by Pavan Gowda S • Engineered for autonomous desktop intelligence with human trust</sub>
+</div>

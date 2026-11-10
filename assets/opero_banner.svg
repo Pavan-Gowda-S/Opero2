@@ -1,0 +1,169 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 360" width="100%" height="100%">
+  <defs>
+    <!-- Background Gradients -->
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#050a12" />
+      <stop offset="50%" stop-color="#081422" />
+      <stop offset="100%" stop-color="#03070d" />
+    </linearGradient>
+
+    <!-- Glowing Accent Gradients -->
+    <linearGradient id="cyanGlow" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#00f5d4" />
+      <stop offset="50%" stop-color="#00bbf9" />
+      <stop offset="100%" stop-color="#4361ee" />
+    </linearGradient>
+
+    <linearGradient id="goldGlow" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#ffb703" />
+      <stop offset="100%" stop-color="#fb8500" />
+    </linearGradient>
+
+    <linearGradient id="lineGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#00f5d4" stop-opacity="0" />
+      <stop offset="25%" stop-color="#00f5d4" stop-opacity="0.8" />
+      <stop offset="50%" stop-color="#00bbf9" stop-opacity="1" />
+      <stop offset="75%" stop-color="#4361ee" stop-opacity="0.8" />
+      <stop offset="100%" stop-color="#4361ee" stop-opacity="0" />
+    </linearGradient>
+
+    <!-- Grid Pattern -->
+    <pattern id="grid" width="30" height="30" patternUnits="userSpaceOnUse">
+      <path d="M 30 0 L 0 0 0 30" fill="none" stroke="#00bbf9" stroke-width="0.5" stroke-opacity="0.08" />
+    </pattern>
+
+    <!-- Subtle Radar Circles -->
+    <pattern id="dots" width="20" height="20" patternUnits="userSpaceOnUse">
+      <circle cx="2" cy="2" r="1" fill="#00f5d4" fill-opacity="0.12" />
+    </pattern>
+
+    <style>
+      @keyframes pulseGlow {
+        0%, 100% { filter: drop-shadow(0 0 15px rgba(0, 245, 212, 0.45)); }
+        50% { filter: drop-shadow(0 0 30px rgba(0, 187, 249, 0.8)); }
+      }
+      @keyframes scanline {
+        0% { transform: translateY(-360px); }
+        100% { transform: translateY(360px); }
+      }
+      @keyframes blink {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.3; }
+      }
+      @keyframes orbit {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+      }
+      .title-text {
+        font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        font-weight: 900;
+        letter-spacing: 14px;
+        fill: url(#cyanGlow);
+        animation: pulseGlow 4s ease-in-out infinite;
+      }
+      .badge-text {
+        font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 2.5px;
+      }
+      .hud-line {
+        stroke-dasharray: 6 3;
+        animation: blink 3s ease-in-out infinite;
+      }
+      .laser {
+        animation: scanline 8s linear infinite;
+      }
+    </style>
+  </defs>
+
+  <!-- Deep Sci-Fi Background -->
+  <rect width="1200" height="360" fill="url(#bgGrad)" rx="16" />
+  <rect width="1200" height="360" fill="url(#grid)" rx="16" />
+  <rect width="1200" height="360" fill="url(#dots)" rx="16" />
+
+  <!-- Scanning Laser Line -->
+  <g class="laser" opacity="0.4">
+    <line x1="0" y1="0" x2="1200" y2="0" stroke="url(#cyanGlow)" stroke-width="1.5" />
+  </g>
+
+  <!-- Outer HUD Frame Accents -->
+  <rect x="20" y="20" width="1160" height="320" fill="none" stroke="#00bbf9" stroke-width="1" stroke-opacity="0.25" rx="10" />
+  
+  <!-- Corner Brackets -->
+  <!-- Top-Left -->
+  <path d="M 20 50 L 20 20 L 50 20" fill="none" stroke="#00f5d4" stroke-width="3" />
+  <!-- Top-Right -->
+  <path d="M 1150 20 L 1180 20 L 1180 50" fill="none" stroke="#00f5d4" stroke-width="3" />
+  <!-- Bottom-Left -->
+  <path d="M 20 310 L 20 340 L 50 340" fill="none" stroke="#00f5d4" stroke-width="3" />
+  <!-- Bottom-Right -->
+  <path d="M 1150 340 L 1180 340 L 1180 310" fill="none" stroke="#00f5d4" stroke-width="3" />
+
+  <!-- Top System Status Bar -->
+  <g transform="translate(45, 48)">
+    <circle cx="0" cy="0" r="4" fill="#00f5d4" />
+    <circle cx="0" cy="0" r="8" fill="none" stroke="#00f5d4" stroke-width="1" opacity="0.5">
+      <animate attributeName="r" values="4;10;4" dur="2.5s" repeatCount="indefinite" />
+      <animate attributeName="opacity" values="0.8;0;0.8" dur="2.5s" repeatCount="indefinite" />
+    </circle>
+    <text x="16" y="4" fill="#00f5d4" class="badge-text">STATUS: OPERATIONAL</text>
+    <text x="210" y="4" fill="#5c7f99" class="badge-text">// 218 OFFLINE TESTS PASSING</text>
+    <text x="500" y="4" fill="#5c7f99" class="badge-text">// GEMINI LIVE BIDIRECTIONAL</text>
+    <text x="800" y="4" fill="#ffb703" class="badge-text">// TINYFISH BROWSER AGENT: ARMED</text>
+  </g>
+
+  <!-- Central Title & Core Identity -->
+  <g transform="translate(600, 160)" text-anchor="middle">
+    <!-- Subtitle Category Tag -->
+    <text x="0" y="-55" fill="#00bbf9" font-family="'Segoe UI', sans-serif" font-size="13" font-weight="700" letter-spacing="6" opacity="0.9">
+      AUTONOMOUS MULTIMODAL DESKTOP OPERATOR
+    </text>
+
+    <!-- Main OPERO 2.0 Header -->
+    <text x="0" y="25" font-size="76" class="title-text">
+      OPERO 2.0
+    </text>
+
+    <!-- Tagline -->
+    <text x="0" y="65" fill="#a0c4d9" font-family="'Segoe UI', sans-serif" font-size="16" font-weight="400" letter-spacing="4">
+      Voice-First Desktop Automation • TinyFish Browser Agent • 4-Layer Safety Barrier
+    </text>
+  </g>
+
+  <!-- Center Dynamic Divider -->
+  <line x1="250" y1="250" x2="950" y2="250" stroke="url(#lineGrad)" stroke-width="2" />
+
+  <!-- Bottom Feature Capability Pills -->
+  <g transform="translate(600, 290)" text-anchor="middle">
+    <!-- Pill 1 -->
+    <g transform="translate(-360, 0)">
+      <rect x="-85" y="-16" width="170" height="32" rx="16" fill="#0c1f30" stroke="#00f5d4" stroke-width="1" stroke-opacity="0.4" />
+      <text x="0" y="5" fill="#00f5d4" class="badge-text">🎙️ GEMINI LIVE</text>
+    </g>
+
+    <!-- Pill 2 -->
+    <g transform="translate(-180, 0)">
+      <rect x="-85" y="-16" width="170" height="32" rx="16" fill="#0c1f30" stroke="#00bbf9" stroke-width="1" stroke-opacity="0.4" />
+      <text x="0" y="5" fill="#00bbf9" class="badge-text">⚡ DEEP RESEARCH</text>
+    </g>
+
+    <!-- Pill 3 -->
+    <g transform="translate(0, 0)">
+      <rect x="-85" y="-16" width="170" height="32" rx="16" fill="#0c1f30" stroke="#ffb703" stroke-width="1" stroke-opacity="0.4" />
+      <text x="0" y="5" fill="#ffb703" class="badge-text">🎯 1-CLICK APPLY</text>
+    </g>
+
+    <!-- Pill 4 -->
+    <g transform="translate(180, 0)">
+      <rect x="-85" y="-16" width="170" height="32" rx="16" fill="#0c1f30" stroke="#00f5d4" stroke-width="1" stroke-opacity="0.4" />
+      <text x="0" y="5" fill="#00f5d4" class="badge-text">🛡️ 4-LAYER SAFETY</text>
+    </g>
+
+    <!-- Pill 5 -->
+    <g transform="translate(360, 0)">
+      <rect x="-85" y="-16" width="170" height="32" rx="16" fill="#0c1f30" stroke="#4361ee" stroke-width="1" stroke-opacity="0.4" />
+      <text x="0" y="5" fill="#a5b4fc" class="badge-text">📄 PDF EXPORT</text>
+    </g>
+  </g>
+</svg>
